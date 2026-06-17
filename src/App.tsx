@@ -251,9 +251,12 @@ export default function App() {
       {/* Navigation Bar */}
       <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="container nav-container">
-          <a href="#" className="logo" onClick={(e) => { e.preventDefault(); navigateTo('home'); }}>
-            <Sprout className="w-6 h-6" />
-            <span>LunuNeth AI</span>
+          <a href="#" className="logo" onClick={(e) => { e.preventDefault(); navigateTo('home'); }} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <img src="/logo.jpeg" alt="LunuNeth AI Logo" style={{ width: '2.5rem', height: '2.5rem', borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--accent-primary)' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
+              <span style={{ fontSize: '1.25rem', fontWeight: 800, background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>LunuNeth AI</span>
+              <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 500, letterSpacing: '0.05em' }}>CROP INTELLIGENCE</span>
+            </div>
           </a>
           
           <ul className="nav-links">
@@ -785,9 +788,12 @@ export default function App() {
         <div className="container">
           <div className="footer-grid">
             <div className="footer-logo-desc">
-              <a href="#" className="logo" style={{ marginBottom: '1.25rem' }} onClick={(e) => { e.preventDefault(); navigateTo('home'); }}>
-                <Sprout className="w-5 h-5" />
-                <span>LunuNeth AI</span>
+              <a href="#" className="logo" style={{ marginBottom: '1.25rem', display: 'inline-flex', alignItems: 'center', gap: '0.75rem' }} onClick={(e) => { e.preventDefault(); navigateTo('home'); }}>
+                <img src="/logo.jpeg" alt="LunuNeth AI Logo" style={{ width: '2.2rem', height: '2.2rem', borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--accent-primary)' }} />
+                <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1, textAlign: 'left' }}>
+                  <span style={{ fontSize: '1.15rem', fontWeight: 800, background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>LunuNeth AI</span>
+                  <span style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', fontWeight: 500, letterSpacing: '0.05em' }}>CROP INTELLIGENCE</span>
+                </div>
               </a>
               <p style={{ fontSize: '0.85rem' }}>
                 Bridging deep learning and traditional agriculture to secure crop yields and improve diagnostic accessibility.
