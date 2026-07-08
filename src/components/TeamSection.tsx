@@ -4,6 +4,8 @@ interface TeamMember {
   id: number;
   name: string;
   role: string;
+  regNo?: string;
+  componentName?: string;
   bio: string;
   skills: string[];
   avatar: React.ReactNode;
@@ -55,8 +57,10 @@ export default function TeamSection() {
       id: 2,
       name: 'Vidura',
       role: 'Team Leader',
-      bio: 'Directs development sprints, microservice container assemblies, and designs the FastAPI consolidated agent controller routing.',
-      skills: ['Systems Architecture', 'Docker Dev', 'FastAPI Routing', 'MongoDB Integration'],
+      regNo: 'IT22054890',
+      componentName: 'Component 1: Purple Blotch Disease Detection',
+      bio: 'Directs development sprints, microservice container assemblies, and designs the FastAPI consolidated agent controller routing. Lead researcher on Purple Blotch detection and severity classification.',
+      skills: ['Systems Architecture', 'Docker Dev', 'FastAPI Routing', 'MongoDB Integration', 'TinyML Quantization', 'CNNs & ViTs'],
       socials: { github: '#', linkedin: '#', email: 'mailto:vidura@lununeth.ai' },
       linkedinAvatarUrl: 'https://media.licdn.com/dms/image/v2/D4E03AQEfwqote6kIDQ/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1725266703804?e=1783555200&v=beta&t=A4ZUgerVkCWzyCN_fOn_UOwM2jncQWH7ldiZ8_WlMRs', // To import LinkedIn picture, paste the direct copied address here
       avatar: (
@@ -74,8 +78,10 @@ export default function TeamSection() {
       id: 3,
       name: 'Sithum',
       role: 'Deep Learning Developer (Vision)',
-      bio: 'Responsible for PyTorch object detection networks. Trained and validated Faster R-CNN on crop-thrips coordinates.',
-      skills: ['PyTorch DL', 'Object Localization', 'EfficientNet CAM', 'Model Optimization'],
+      regNo: 'IT22226464',
+      componentName: 'Component 2: Thrips Pest Detection',
+      bio: 'Responsible for PyTorch object detection networks. Trained and validated Faster R-CNN on crop-thrips coordinates, using Sliced Aided Hyper Inference (SAHI) for small pest localization.',
+      skills: ['PyTorch DL', 'Object Localization', 'EfficientNet CAM', 'Model Optimization', 'YOLOv8 & SAHI', 'IPM Scaling'],
       socials: { github: '#', linkedin: '#', email: 'mailto:sithum@lununeth.ai' },
       linkedinAvatarUrl: 'https://media.licdn.com/dms/image/v2/D5603AQFNIsGUxXMm-w/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1731185198793?e=1783555200&v=beta&t=ldWbex9t--UaSQIWH6KTY2FtDflV3FnXqFRGPzLt1CI', // To import LinkedIn picture, paste the direct copied address here
       avatar: (
@@ -92,8 +98,10 @@ export default function TeamSection() {
       id: 4,
       name: 'Senura',
       role: 'Client App Developer (Mobile)',
-      bio: 'Builds cross-platform UI features using Flutter. Connects SQLite on-device caches and optimizes local TFLite operations.',
-      skills: ['Flutter/Dart', 'Mobile DB Caching', 'TFLite Integration', 'Offline Inference'],
+      regNo: 'IT22142528',
+      componentName: 'Component 4: Nutrient Deficiency Detection',
+      bio: 'Builds cross-platform UI features using Flutter. Connects SQLite on-device caches, optimizes local TFLite operations, and designed the leaf nutrient deficiency semantic classifier.',
+      skills: ['Flutter/Dart', 'Mobile DB Caching', 'TFLite Integration', 'Offline Inference', 'Feature Fusion', 'SHAP Explainability'],
       socials: { github: '#', linkedin: '#', email: 'mailto:senura@lununeth.ai' },
       linkedinAvatarUrl: 'https://media.licdn.com/dms/image/v2/D5603AQF7qbKa_plifA/profile-displayphoto-scale_400_400/B56ZwFtWFQHIAk-/0/1769622301545?e=1783555200&v=beta&t=wYjtBlZ1NXKUh_Mukaih0XXpizWOCDBzzjiW5VRgvVk', // To import LinkedIn picture, paste the direct copied address here
       avatar: (
@@ -110,8 +118,10 @@ export default function TeamSection() {
       id: 5,
       name: 'Kaveesha',
       role: 'Predictive Systems Developer',
-      bio: 'Architect of the Spatio-Temporal Graph Neural Network. Programs multi-agent forecast probabilities and MongoDB connections.',
-      skills: ['GNN Modeling', 'Spatio-Temporal GNN', 'Database Clustering', 'Bayesian Networks'],
+      regNo: 'IT22087256',
+      componentName: 'Component 3: Trilingual Chatbot & Context-Aware Diagnostics',
+      bio: 'Architect of the Spatio-Temporal Graph Neural Network. Programs multi-agent forecast probabilities, MongoDB connections, and the trilingual chatbot conversational routing.',
+      skills: ['GNN Modeling', 'Spatio-Temporal GNN', 'Database Clustering', 'Bayesian Networks', 'mBERT & Seq2Seq', 'NLP Diagnostics'],
       socials: { github: '#', linkedin: '#', email: 'mailto:kaveesha@lununeth.ai' },
       linkedinAvatarUrl: 'https://media.licdn.com/dms/image/v2/D5635AQEawBaMLJhMow/profile-framedphoto-shrink_400_400/profile-framedphoto-shrink_400_400/0/1734508366578?e=1782327600&v=beta&t=im2i7yNgXwkEuyzf2heJ6hqCnQQobsPqYCFsJIXVEzM', // To import LinkedIn picture, paste the direct copied address here
       avatar: (
@@ -208,9 +218,23 @@ export default function TeamSection() {
           <AvatarImage member={members[0]} fallbackId="fallback-leader" />
           
           <h3>{members[0].name}</h3>
-          <div className="team-role" style={{ color: 'var(--accent-secondary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          
+          {members[0].regNo && (
+            <div style={{ fontSize: '0.75rem', color: 'var(--accent-secondary)', fontFamily: 'monospace', fontWeight: 'bold', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
+              {members[0].regNo}
+            </div>
+          )}
+          
+          <div className="team-role" style={{ color: 'var(--accent-secondary)', display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
             <Network className="w-4 h-4" /> {members[0].role}
           </div>
+
+          {members[0].componentName && (
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-primary)', opacity: 0.9, fontWeight: 500, marginBottom: '0.75rem', lineHeight: '1.2', borderLeft: '2px solid var(--accent-secondary)', paddingLeft: '0.4rem' }}>
+              {members[0].componentName}
+            </div>
+          )}
+
           <p style={{ fontSize: '0.8rem', marginBottom: '1.25rem', color: 'var(--text-secondary)' }}>
             {members[0].bio}
           </p>
@@ -246,9 +270,23 @@ export default function TeamSection() {
             <AvatarImage member={member} fallbackId={`fallback-${member.name.toLowerCase()}`} />
             
             <h3>{member.name}</h3>
-            <div className="team-role" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+
+            {member.regNo && (
+              <div style={{ fontSize: '0.75rem', color: 'var(--accent-secondary)', fontFamily: 'monospace', fontWeight: 'bold', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
+                {member.regNo}
+              </div>
+            )}
+
+            <div className="team-role" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
               <Code className="w-4 h-4" /> {member.role}
             </div>
+
+            {member.componentName && (
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-primary)', opacity: 0.9, fontWeight: 500, marginBottom: '0.75rem', lineHeight: '1.2', borderLeft: '2px solid var(--accent-primary)', paddingLeft: '0.4rem' }}>
+                {member.componentName}
+              </div>
+            )}
+
             <p style={{ fontSize: '0.8rem', marginBottom: '1.25rem', color: 'var(--text-secondary)' }}>
               {member.bio}
             </p>

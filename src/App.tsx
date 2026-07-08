@@ -12,7 +12,6 @@ import {
   Mail, 
   Phone, 
   MapPin, 
-  ArrowUpRight, 
   Menu, 
   X, 
   Send,
@@ -27,14 +26,50 @@ import AgriBotDemo from './components/AgriBotDemo';
 import DownloadSection from './components/DownloadSection';
 import ResearchGallery from './components/ResearchGallery';
 import TeamSection from './components/TeamSection';
+import ProjectOverview from './components/ProjectOverview';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
+// Type declarations for Google model-viewer custom element
+declare module 'react' {
+  namespace JSX {
+    interface IntrinsicElements {
+      'model-viewer': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
+        src?: string;
+        alt?: string;
+        'camera-controls'?: boolean;
+        'disable-zoom'?: boolean;
+        'shadow-intensity'?: string | number;
+        'environment-image'?: string;
+        exposure?: string | number;
+        'interaction-prompt'?: string;
+        'camera-orbit'?: string;
+        'field-of-view'?: string;
+        loading?: string;
+        class?: string;
+        id?: string;
+        style?: React.CSSProperties;
+      }, HTMLElement>;
+    }
+  }
+}
+
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<'home' | 'simulators' | 'gallery' | 'beta'>('home');
+  const [currentPage, setCurrentPage] = useState<'home' | 'overview' | 'simulators' | 'gallery' | 'beta'>('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
+
+  const [activeFlavor, setActiveFlavor] = useState<'yellow' | 'purple'>('yellow');
+
+  // Refs for 3D elements
+  const modelViewerRef = useRef<any>(null);
+  const tagsRef = useRef<HTMLDivElement>(null);
+  const accessoriesBGRef = useRef<HTMLDivElement>(null);
+  const accessoriesFGRef = useRef<HTMLDivElement>(null);
+
+  const isSwitching = useRef(false);
+  const switchSpinRef = useRef(0);
 
   // Form states
   const [formData, setFormData] = useState({ name: '', email: '', role: 'Farmer', message: '' });
@@ -75,7 +110,7 @@ export default function App() {
   }, [currentPage]);
 
   // Router-like function
-  const navigateTo = (page: 'home' | 'simulators' | 'gallery' | 'beta', hash?: string) => {
+  const navigateTo = (page: 'home' | 'overview' | 'simulators' | 'gallery' | 'beta', hash?: string) => {
     setCurrentPage(page);
     setMobileMenuOpen(false);
     
@@ -143,6 +178,303 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [currentPage]);
 
+  // switchColorway function for flavor changes
+  const switchColorway = (flavor: 'yellow' | 'purple') => {
+    if (isSwitching.current) return;
+    isSwitching.current = true;
+    setActiveFlavor(flavor);
+
+    const body = document.body;
+    const accessories = document.querySelectorAll('.accessory');
+    const heroCenter = document.querySelector('.hero-center') as HTMLElement;
+    const modelViewer = modelViewerRef.current;
+
+    // Background color morphing using GSAP
+    const targetColors = flavor === 'purple' ?
+        { inner: '#2e1049', mid: '#1e1b4b', outer: '#090514' } :
+        { inner: '#0f2c1f', mid: '#0a1a12', outer: '#040b08' };
+
+    gsap.to(body, {
+        '--bg-inner': targetColors.inner,
+        '--bg-mid': targetColors.mid,
+        '--bg-outer': targetColors.outer,
+        duration: 1.5,
+        ease: 'power2.inOut'
+    });
+
+    // 3D Model spin animation (360 spin + blur with back settle)
+    const spinObj = { val: 0, blur: 0 };
+    gsap.to(spinObj, {
+        val: 360,
+        blur: 15,
+        duration: 0.6,
+        ease: "power2.in",
+        onUpdate: () => {
+            switchSpinRef.current = spinObj.val;
+            if (modelViewer) {
+                modelViewer.style.filter = `blur(${spinObj.blur}px)`;
+            }
+        },
+        onComplete: () => {
+            // Swap model at the peak of the spin
+            if (flavor === 'purple') {
+                body.classList.add('purple-theme');
+                if (modelViewer) {
+                    modelViewer.src = "/model/purple_onion.glb";
+                }
+                accessories.forEach(acc => {
+                    (acc as any).src = "/model/onion.glb";
+                });
+            } else {
+                body.classList.remove('purple-theme');
+                if (modelViewer) {
+                    modelViewer.src = "/model/onion.glb";
+                }
+                accessories.forEach(acc => {
+                    (acc as any).src = "/model/purple_onion.glb";
+                });
+            }
+
+            gsap.to(spinObj, {
+                val: 720,
+                blur: 0,
+                duration: 1.5,
+                ease: "back.out(0.7)",
+                onUpdate: () => {
+                    switchSpinRef.current = spinObj.val;
+                    if (modelViewer) {
+                        modelViewer.style.filter = `blur(${spinObj.blur}px)`;
+                    }
+                },
+                onComplete: () => {
+                    switchSpinRef.current = 0;
+                    if (modelViewer) {
+                        modelViewer.style.filter = 'none';
+                    }
+                }
+            });
+        }
+    });
+
+    // Accessories implode/explode transition
+    let completedAccessories = 0;
+    accessories.forEach((acc) => {
+        const accessory = acc as HTMLElement;
+        const aW = accessory.offsetWidth / 2 || 60;
+        const aH = accessory.offsetHeight / 2 || 60;
+        const centerX = (heroCenter.offsetWidth / 2 - accessory.offsetLeft - aW);
+        const centerY = (heroCenter.offsetHeight / 2 - accessory.offsetTop - aH);
+
+        const startAngle = parseFloat(accessory.dataset.angle || '0') || 0;
+        const currentBaseX = parseFloat(accessory.dataset.baseX || '0') || 0;
+        const currentBaseY = parseFloat(accessory.dataset.baseY || '0') || 0;
+
+        const nextBaseX = (Math.random() - 0.5) * 200;
+        const nextBaseY = (Math.random() - 0.5) * 200;
+
+        gsap.set(accessory, {
+            rotation: startAngle,
+            x: currentBaseX,
+            y: currentBaseY
+        });
+
+        const accessoryTl = gsap.timeline();
+
+        accessoryTl.to(accessory, {
+            x: centerX,
+            y: centerY,
+            rotation: startAngle + 45,
+            scale: 0.1,
+            opacity: 0,
+            duration: 0.5,
+            ease: "power2.in",
+            onComplete: () => {
+                if (heroCenter) heroCenter.style.zIndex = '50';
+            }
+        })
+        .to(accessory, {
+            duration: 0.3
+        })
+        .to(accessory, {
+            onStart: () => {
+                if (heroCenter) heroCenter.style.zIndex = '1';
+            },
+            x: nextBaseX,
+            y: nextBaseY,
+            rotation: startAngle + 90,
+            scale: 1,
+            opacity: 1,
+            duration: 0.9,
+            ease: "back.out(1.5)",
+            onComplete: () => {
+                accessory.dataset.angle = (startAngle + 90).toString();
+                accessory.dataset.baseX = nextBaseX.toString();
+                accessory.dataset.baseY = nextBaseY.toString();
+                accessory.dataset.rx = '0';
+                accessory.dataset.ry = '0';
+
+                completedAccessories++;
+                if (completedAccessories === accessories.length) {
+                    isSwitching.current = false;
+                }
+            }
+        });
+    });
+  };
+
+  const handleFlavorChange = (flavor: 'yellow' | 'purple') => {
+    if (flavor === activeFlavor) return;
+    switchColorway(flavor);
+  };
+
+  const toggleFlavor = () => {
+    const nextFlavor = activeFlavor === 'yellow' ? 'purple' : 'yellow';
+    switchColorway(nextFlavor);
+  };
+
+  // Mouse tracking and animation frame loop
+  useEffect(() => {
+    if (currentPage !== 'home') return;
+
+    // Initialize accessory data attributes
+    const accessories = document.querySelectorAll('.accessory');
+    accessories.forEach(a => {
+      const el = a as HTMLElement;
+      el.dataset.rx = '0';
+      el.dataset.ry = '0';
+      el.dataset.angle = (Math.random() * 360).toString();
+      el.dataset.baseX = '0';
+      el.dataset.baseY = '0';
+    });
+
+    let mouse = { x: 0, y: 0, px: 0, py: 0 };
+    let currentMouse = { x: 0, y: 0 };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      mouse.x = (e.clientX / window.innerWidth) - 0.5;
+      mouse.y = (e.clientY / window.innerHeight) - 0.5;
+      mouse.px = e.clientX;
+      mouse.py = e.clientY;
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+
+    let animationFrameId: number;
+
+    const animate = () => {
+      const time = Date.now() * 0.001;
+      
+      currentMouse.x += (mouse.x - currentMouse.x) * 0.05;
+      currentMouse.y += (mouse.y - currentMouse.y) * 0.05;
+
+      if (modelViewerRef.current) {
+        modelViewerRef.current.cameraOrbit = `${(currentMouse.x * 40) + switchSpinRef.current}deg ${90 + (currentMouse.y * 20)}deg 380%`;
+      }
+
+      if (accessoriesFGRef.current) {
+        accessoriesFGRef.current.style.transform = `translate(${currentMouse.x * 60}px, ${currentMouse.y * 60}px)`;
+      }
+      if (accessoriesBGRef.current) {
+        accessoriesBGRef.current.style.transform = `translate(${currentMouse.x * -30}px, ${currentMouse.y * -30}px)`;
+      }
+      if (tagsRef.current) {
+        tagsRef.current.style.transform = `translate(${currentMouse.x * -15}px, ${currentMouse.y * -15}px)`;
+      }
+
+      if (!isSwitching.current) {
+        const allAccessories = document.querySelectorAll('.accessory');
+        allAccessories.forEach((acc, i) => {
+          const accessory = acc as HTMLElement;
+          const accRect = accessory.getBoundingClientRect();
+          const accX = accRect.left + accRect.width / 2;
+          const accY = accRect.top + accRect.height / 2;
+
+          const diffX = mouse.px - accX;
+          const diffY = mouse.py - accY;
+          const distance = Math.sqrt(diffX * diffX + diffY * diffY);
+
+          let targetRx = 0, targetRy = 0, speedMult = 1;
+
+          if (distance < 400) {
+            const force = (400 - distance) / 400;
+            targetRx = (diffX / distance) * force * -80;
+            targetRy = (diffY / distance) * force * -80;
+            speedMult = 1 + force * 5;
+          }
+
+          let rx = parseFloat(accessory.dataset.rx || '0') || 0;
+          let ry = parseFloat(accessory.dataset.ry || '0') || 0;
+          let angle = parseFloat(accessory.dataset.angle || '0') || 0;
+          let baseX = parseFloat(accessory.dataset.baseX || '0') || 0;
+          let baseY = parseFloat(accessory.dataset.baseY || '0') || 0;
+
+          rx += (targetRx - rx) * 0.1;
+          ry += (targetRy - ry) * 0.1;
+          angle += 0.2 * speedMult;
+
+          accessory.dataset.rx = rx.toString();
+          accessory.dataset.ry = ry.toString();
+          accessory.dataset.angle = angle.toString();
+
+          const dur = [5, 7, 6, 8, 5.5, 6.5, 9, 11, 10][i % 9];
+          const phase = (time + i * 0.7) * (Math.PI * 2 / dur);
+          const floatY = Math.sin(phase) * 15;
+          const floatAngle = Math.cos(phase) * 6;
+
+          accessory.style.transform = `translate(calc(${rx + baseX}px), calc(${ry + baseY}px + ${floatY}px)) rotate(calc(${angle}deg + ${floatAngle}deg))`;
+        });
+      }
+
+      const tags = document.querySelectorAll('.tag');
+      tags.forEach((tagEl, i) => {
+        const tag = tagEl as HTMLElement;
+        const dur = 10 + i * 2;
+        const phase = (time + i * 1.2) * (Math.PI * 2 / dur);
+        const floatY = Math.sin(phase) * 20;
+        const floatX = Math.cos(phase * 0.5) * 15;
+        const floatAngle = Math.sin(phase * 0.3) * 15;
+        tag.style.transform = `translate(${floatX}px, ${floatY}px) rotate(${floatAngle}deg)`;
+      });
+
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    const particleInterval = setInterval(() => {
+      const container = document.getElementById('bubbles-container');
+      if (!container) return;
+      const particle = document.createElement('div');
+      particle.className = 'bubble-img';
+      
+      const size = Math.random() * 12 + 6;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      particle.style.left = `${Math.random() * 100}%`;
+      particle.style.bottom = '-50px';
+      particle.style.borderRadius = '50%';
+      particle.style.position = 'absolute';
+      particle.style.pointerEvents = 'none';
+      
+      const isPurple = document.body.classList.contains('purple-theme');
+      const color = isPurple ? 'rgba(167, 139, 250, 0.6)' : 'rgba(0, 255, 135, 0.6)';
+      particle.style.background = `radial-gradient(circle, ${color} 0%, transparent 80%)`;
+      particle.style.boxShadow = `0 0 10px ${isPurple ? 'rgba(167, 139, 250, 0.3)' : 'rgba(0, 255, 135, 0.3)'}`;
+      
+      const duration = Math.random() * 6 + 4;
+      particle.style.animation = `floatUpImg ${duration}s linear forwards`;
+
+      container.appendChild(particle);
+      setTimeout(() => particle.remove(), duration * 1000);
+    }, 400);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(animationFrameId);
+      clearInterval(particleInterval);
+    };
+  }, [currentPage]);
+
   // GSAP Entrance Animations
   useGSAP(() => {
     // Kill existing triggers
@@ -152,10 +484,10 @@ export default function App() {
       // Hero Animations
       const heroTl = gsap.timeline();
       heroTl.from('.hero-tag', { opacity: 0, y: -20, duration: 0.6, ease: 'power2.out' })
-            .from('.hero-title span', { opacity: 0, y: 30, duration: 0.8, stagger: 0.2, ease: 'power3.out' }, '-=0.4')
-            .from('.hero-description', { opacity: 0, y: 20, duration: 0.6, ease: 'power2.out' }, '-=0.4')
-            .from('.hero-btns', { opacity: 0, y: 20, duration: 0.6, ease: 'power2.out' }, '-=0.4')
-            .from('.hero-visual', { opacity: 0, scale: 0.95, duration: 1, ease: 'power3.out' }, '-=0.8');
+            .from('.main-title', { opacity: 0, y: 30, duration: 0.8, ease: 'power3.out' }, '-=0.4')
+            .from('.hero-left .description', { opacity: 0, y: 20, duration: 0.6, ease: 'power2.out' }, '-=0.4')
+            .from('.cta-group', { opacity: 0, y: 20, duration: 0.6, ease: 'power2.out' }, '-=0.4')
+            .from('.hero-center', { opacity: 0, scale: 0.95, duration: 1, ease: 'power3.out' }, '-=0.8');
 
       // Scroll Trigger animations for cards and sections using fromTo for stability
       if (document.querySelector('.feature-card')) {
@@ -265,6 +597,11 @@ export default function App() {
           }
         );
       }
+    } else if (currentPage === 'overview') {
+      gsap.fromTo('.section-header', 
+        { opacity: 0, y: -20 },
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }
+      );
     } else if (currentPage === 'beta') {
       gsap.fromTo('.section-header', 
         { opacity: 0, y: -20 },
@@ -317,11 +654,11 @@ export default function App() {
       {/* Navigation Bar */}
       <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="container nav-container">
-          <a href="#" className="logo" onClick={(e) => { e.preventDefault(); navigateTo('home'); }} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <a href="#" className="logo" onClick={(e) => { e.preventDefault(); navigateTo('home'); }} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', whiteSpace: 'nowrap' }}>
             <img src="/logo.jpeg" alt="LunuNeth AI Logo" style={{ width: '2.5rem', height: '2.5rem', borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--accent-primary)' }} />
-            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-              <span style={{ fontSize: '1.25rem', fontWeight: 800, background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>LunuNeth AI</span>
-              <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 500, letterSpacing: '0.05em' }}>CROP INTELLIGENCE</span>
+            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1, whiteSpace: 'nowrap' }}>
+              <span style={{ fontSize: '1.25rem', fontWeight: 800, background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', whiteSpace: 'nowrap' }}>LunuNeth AI</span>
+              <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 500, letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>CROP INTELLIGENCE</span>
             </div>
           </a>
           
@@ -333,6 +670,15 @@ export default function App() {
                 onClick={(e) => { e.preventDefault(); navigateTo('home'); }}
               >
                 Home
+              </a>
+            </li>
+            <li>
+              <a 
+                href="#" 
+                className={currentPage === 'overview' ? 'active' : ''} 
+                onClick={(e) => { e.preventDefault(); navigateTo('overview'); }}
+              >
+                Overview
               </a>
             </li>
             <li>
@@ -409,6 +755,13 @@ export default function App() {
             </a>
             <a 
               href="#" 
+              className={currentPage === 'overview' ? 'active' : ''} 
+              onClick={(e) => { e.preventDefault(); navigateTo('overview'); }}
+            >
+              Overview
+            </a>
+            <a 
+              href="#" 
               className={currentPage === 'simulators' ? 'active' : ''} 
               onClick={(e) => { e.preventDefault(); navigateTo('simulators'); }}
             >
@@ -448,45 +801,119 @@ export default function App() {
 
       {/* Hero Section */}
       {currentPage === 'home' && (
-        <header className="container" ref={heroRef}>
-          <div className="hero-wrapper">
-            <div className="hero-content">
-              <div className="hero-tag">
-                <span></span> Next-Gen Crop Intelligence
-              </div>
-              <h1 className="hero-title">
-                <span>Scientific </span>
-                <span className="gradient-text">Crop Advisory </span>
-                <span>at Your Fingertips</span>
-              </h1>
-              <p className="hero-description">
-                Empowering onion farmers and researchers with deep learning. 
-                Diagnose diseases, track thrips pests, identify nutrient deficiencies, and predict regional outbreaks.
-              </p>
-              <div className="hero-btns">
-                <a 
-                  href="#" 
-                  onClick={(e) => { e.preventDefault(); navigateTo('beta'); }} 
-                  className="solid-btn"
-                >
-                  Download Mobile App <ArrowUpRight className="w-4 h-4" />
-                </a>
-                <a 
-                  href="#" 
-                  onClick={(e) => { e.preventDefault(); navigateTo('simulators'); }} 
-                  className="outline-btn"
-                >
-                  Try Live Simulator
-                </a>
-              </div>
-            </div>
+        <header className="hero-main-container" ref={heroRef}>
+          <main className="hero">
+            <div id="bubbles-container"></div>
+            <div className="hero-3d-content">
+              {/* 3b. Left Column */}
+              <div className="hero-left">
+                <div className="hero-tag">
+                  <span></span> Next-Gen Crop Intelligence
+                </div>
+                <h1 className="main-title large-animation-1">
+                  <span className="outline">Lunu</span>Neth<br/>
+                  AI
+                </h1>
+                <p className="description">
+                  Empowering onion farmers and researchers with deep learning. 
+                  Diagnose diseases, track thrips pests, identify nutrient deficiencies, and predict regional outbreaks.
+                </p>
+                <div className="cta-group">
+                  <a 
+                    href="#" 
+                    onClick={(e) => { e.preventDefault(); navigateTo('beta'); }} 
+                    className="primary-btn"
+                  >
+                    Download App
+                    <span className="plus-icon">+</span>
+                  </a>
+                  <a 
+                    href="#" 
+                    onClick={(e) => { e.preventDefault(); navigateTo('simulators'); }} 
+                    className="primary-btn"
+                    style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)' }}
+                  >
+                    Try Live Demo
+                    <span className="plus-icon" style={{ background: 'var(--accent-secondary)' }}>→</span>
+                  </a>
+                </div>
 
-            <div className="hero-visual">
-              <div className="hero-glow-orb"></div>
-              {/* Visual Simulator Showcase */}
-              <ScannerDemo />
+                <div className="award-badge">
+                  <div className="award-icon">
+                    <Sprout className="text-emerald-400 w-5 h-5" />
+                  </div>
+                  <div className="award-text">
+                    <span className="award-title">AI CROP ADVISORY</span>
+                    <span className="award-subtitle">ALGORITHMIC PRECISION 2026</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 3d. Center product (the 3D onion + tags + accessories) */}
+              <div className="hero-center">
+                {/* 3a. Far background tags */}
+                <div className="tags-container" ref={tagsRef}>
+                  <model-viewer className="tag t1" src="/model/purple_onion.glb" environment-image="neutral" exposure="1.0" interaction-prompt="none" camera-orbit="45deg 75deg 105%"></model-viewer>
+                  <model-viewer className="tag t2" src="/model/purple_onion.glb" environment-image="neutral" exposure="1.0" interaction-prompt="none" camera-orbit="-30deg 60deg 105%"></model-viewer>
+                  <model-viewer className="tag t3" src="/model/purple_onion.glb" environment-image="neutral" exposure="1.0" interaction-prompt="none" camera-orbit="120deg 85deg 105%"></model-viewer>
+                  <model-viewer className="tag t4" src="/model/purple_onion.glb" environment-image="neutral" exposure="1.0" interaction-prompt="none" camera-orbit="10deg 45deg 105%"></model-viewer>
+                </div>
+
+                {/* 3c. Background accessories (behind main model) */}
+                <div className="accessories-container-bg" ref={accessoriesBGRef}>
+                  <model-viewer className="accessory a7" src="/model/purple_onion.glb" environment-image="neutral" exposure="1.0" interaction-prompt="none" camera-orbit="-20deg 110deg 105%"></model-viewer>
+                  <model-viewer className="accessory a8" src="/model/purple_onion.glb" environment-image="neutral" exposure="1.0" interaction-prompt="none" camera-orbit="160deg 45deg 105%"></model-viewer>
+                  <model-viewer className="accessory a9" src="/model/purple_onion.glb" environment-image="neutral" exposure="1.0" interaction-prompt="none" camera-orbit="45deg 20deg 105%"></model-viewer>
+                </div>
+
+                <model-viewer id="product-model" ref={modelViewerRef} src="/model/onion.glb" alt="LunuNeth AI Onion 3D Model" camera-controls
+                  disable-zoom shadow-intensity="0" environment-image="neutral" exposure="1.5"
+                  interaction-prompt="none" camera-orbit="0deg 90deg 380%" field-of-view="30deg"
+                  className="main-product-3d">
+                </model-viewer>
+
+                {/* 3e. Foreground accessories */}
+                <div className="accessories-container" ref={accessoriesFGRef}>
+                  <model-viewer className="accessory a1" src="/model/purple_onion.glb" environment-image="neutral" exposure="1.2" interaction-prompt="none" camera-orbit="45deg 120deg 105%"></model-viewer>
+                  <model-viewer className="accessory a2" src="/model/purple_onion.glb" environment-image="neutral" exposure="1.2" interaction-prompt="none" camera-orbit="-120deg 45deg 105%"></model-viewer>
+                  <model-viewer className="accessory a3" src="/model/purple_onion.glb" environment-image="neutral" exposure="1.2" interaction-prompt="none" camera-orbit="200deg 90deg 105%"></model-viewer>
+                  <model-viewer className="accessory a4" src="/model/purple_onion.glb" environment-image="neutral" exposure="1.2" interaction-prompt="none" camera-orbit="10deg 20deg 105%"></model-viewer>
+                  <model-viewer className="accessory a5" src="/model/purple_onion.glb" environment-image="neutral" exposure="1.2" interaction-prompt="none" camera-orbit="-45deg 160deg 105%"></model-viewer>
+                  <model-viewer className="accessory a6" src="/model/purple_onion.glb" environment-image="neutral" exposure="1.2" interaction-prompt="none" camera-orbit="80deg 75deg 105%"></model-viewer>
+                </div>
+              </div>
+
+              {/* 3f. Right Column */}
+              <div className="hero-right">
+                <div className="product-carousel">
+                  <div className="carousel-cards">
+                    <div className={`card ${activeFlavor === 'yellow' ? 'active' : ''}`} onClick={() => handleFlavorChange('yellow')}>
+                      <img src="/images/yellow_onion_card.png" alt="LunuNeth Yellow Spanish Onion" />
+                      <div className="card-info">
+                        <span>Yellow Spanish</span>
+                        <span>$1.89 / lb</span>
+                      </div>
+                    </div>
+                    <div className={`card ${activeFlavor === 'purple' ? 'active' : ''}`} onClick={() => handleFlavorChange('purple')}>
+                      <img src="/images/purple_onion_card.png" alt="LunuNeth Red Baron Onion" style={{ filter: 'brightness(0.85)' }} />
+                      <div className="card-info">
+                        <span>Red Baron</span>
+                        <span>$2.49 / lb</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="carousel-nav">
+                    <button className="nav-arrow" onClick={toggleFlavor}>←</button>
+                    <button className="nav-arrow" onClick={toggleFlavor}>→</button>
+                  </div>
+                </div>
+                <h2 className="side-title large-animation-1">
+                  <span className="outline">Precision</span><br/>
+                  Farming
+                </h2>
+              </div>
             </div>
-          </div>
+          </main>
         </header>
       )}
 
@@ -652,6 +1079,15 @@ export default function App() {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* Project Overview Section */}
+      {currentPage === 'overview' && (
+        <section id="overview" className="section" style={{ paddingTop: '8rem', borderTop: '1px solid var(--border-glass)', background: 'rgba(5, 15, 10, 0.1)' }}>
+          <div className="container">
+            <ProjectOverview />
           </div>
         </section>
       )}
@@ -873,6 +1309,7 @@ export default function App() {
             <div className="footer-col">
               <h4>Platform Links</h4>
               <ul className="footer-links">
+                <li><a href="#" onClick={(e) => { e.preventDefault(); navigateTo('overview'); }}>Project Overview</a></li>
                 <li><a href="#" onClick={(e) => { e.preventDefault(); navigateTo('simulators'); }}>Live Simulator</a></li>
                 <li><a href="#" onClick={(e) => { e.preventDefault(); navigateTo('gallery'); }}>Research Logs</a></li>
                 <li><a href="#" onClick={(e) => { e.preventDefault(); navigateTo('home', 'team'); }}>Our Team</a></li>

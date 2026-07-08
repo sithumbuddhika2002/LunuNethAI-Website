@@ -25,6 +25,11 @@
   
   --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   --transition-fast: all 0.2s ease;
+
+  /* Dynamic Background Variables for 3D Hero */
+  --bg-inner: #0f2c1f;
+  --bg-mid: #0a1a12;
+  --bg-outer: #040b08;
 }
 
 /* Base Reset */
@@ -45,11 +50,9 @@ html {
 body {
   min-height: 100vh;
   overflow-x: hidden;
-  background-image: 
-    radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.04) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(0, 255, 135, 0.03) 0%, transparent 45%),
-    radial-gradient(circle at 50% 50%, rgba(15, 118, 110, 0.02) 0%, transparent 50%);
+  background: radial-gradient(circle at center, var(--bg-inner) 0%, var(--bg-mid) 50%, var(--bg-outer) 100%);
   background-attachment: fixed;
+  transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Typography */
@@ -142,6 +145,7 @@ a {
   font-weight: 800;
   color: var(--text-primary);
   transition: var(--transition-fast);
+  white-space: nowrap;
 }
 
 .logo:hover {
@@ -152,6 +156,7 @@ a {
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  white-space: nowrap;
 }
 
 .logo svg {
@@ -179,6 +184,7 @@ a {
   display: block;
   position: relative;
   border: 1px solid transparent;
+  white-space: nowrap;
 }
 
 .nav-links a:hover {
@@ -290,6 +296,7 @@ a {
   gap: 0.75rem;
   transition: var(--transition-smooth);
   box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.3);
+  white-space: nowrap;
 }
 
 .solid-btn:hover {
@@ -1060,7 +1067,35 @@ a {
 }
 
 /* Mobile Responsive Adjustments */
+@media (max-width: 1200px) {
+  .navbar {
+    padding: 0.6rem 1.25rem;
+  }
+  .nav-links {
+    gap: 0.25rem;
+  }
+  .nav-links a {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.85rem;
+  }
+  .logo {
+    gap: 0.5rem;
+  }
+}
+
 @media (max-width: 1024px) {
+  .nav-links {
+    display: none;
+  }
+  
+  .navbar .solid-btn {
+    display: none;
+  }
+  
+  .mobile-menu-btn {
+    display: flex;
+  }
+
   .hero-wrapper {
     grid-template-columns: 1fr;
     gap: 3rem;
@@ -1102,18 +1137,6 @@ a {
 }
 
 @media (max-width: 768px) {
-  .nav-links {
-    display: none;
-  }
-  
-  .navbar .solid-btn {
-    display: none;
-  }
-  
-  .mobile-menu-btn {
-    display: flex;
-  }
-  
   .features-grid {
     grid-template-columns: 1fr;
   }
@@ -1923,4 +1946,581 @@ a {
   .members-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* 3D Onion Hero Layout & Components */
+.hero-main-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.hero {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4%;
+  padding-top: 5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-3d-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  height: 100%;
+  position: relative;
+}
+
+/* Typography styles for 3D Hero */
+.main-title,
+.side-title {
+  font-family: 'Galada', cursive, var(--font-display);
+  font-size: clamp(4rem, 8vw, 10rem);
+  line-height: 0.85;
+  font-weight: 400;
+  text-transform: none;
+  white-space: nowrap;
+  color: white;
+  letter-spacing: normal;
+}
+
+.outline {
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.8);
+}
+
+/* 1. Particle Container & Floating Spores */
+#bubbles-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bubble-img {
+  position: absolute;
+  pointer-events: none;
+  filter: blur(1px);
+}
+
+@keyframes floatUpImg {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% {
+    transform: translateY(-110vh) translateX(40px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* 2. Floating Hang-tags (Far background) */
+.tags-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  transition: transform 0.1s ease-out;
+}
+
+.tag {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  pointer-events: none;
+  z-index: -1;
+  filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.25));
+}
+
+.t1 { top: 12%; left: 12%; width: 70px; height: 70px; opacity: 0.6; }
+.t2 { top: 38%; left: 82%; width: 130px; height: 130px; opacity: 0.45; }
+.t3 { top: 72%; left: 72%; width: 85px; height: 85px; opacity: 0.5; }
+.t4 { top: 82%; left: 18%; width: 110px; height: 110px; opacity: 0.35; }
+
+/* 3. Left Column Layout */
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 5rem 0;
+  gap: 1.8rem;
+  z-index: 100;
+  flex: 1;
+  max-width: 480px;
+}
+
+.hero-left .description {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  max-width: 420px;
+}
+
+.cta-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.primary-btn {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: white;
+  padding: 0.4rem 0.4rem 0.4rem 1.5rem;
+  border-radius: 100px;
+  font-weight: 700;
+  cursor: pointer;
+  width: fit-content;
+  transition: var(--transition-smooth);
+  box-shadow: none;
+}
+
+.primary-btn:hover {
+  background: rgba(16, 185, 129, 0.25);
+  border-color: rgba(16, 185, 129, 0.6);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px -10px rgba(16, 185, 129, 0.3);
+}
+
+.plus-icon {
+  background: var(--accent-primary);
+  color: #05140f;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  font-weight: 900;
+  line-height: 1;
+  border: none;
+  transition: var(--transition-fast);
+}
+
+.primary-btn:hover .plus-icon {
+  transform: rotate(90deg);
+}
+
+.award-badge {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.award-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--bg-glass-card);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.award-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.award-title {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.award-subtitle {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* 4. Background accessories (behind onion) */
+.accessories-container-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  transition: transform 0.1s ease-out;
+}
+
+/* 5. Center product (the 3D Onion) */
+.hero-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  opacity: 0;
+  animation: fadeIn 1.5s ease-out 0.3s forwards, float 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.main-product-3d {
+  width: 80vw;
+  height: 80vh;
+  outline: none;
+  --progress-bar-color: transparent;
+  --poster-color: transparent;
+  z-index: 1;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(25deg);
+  pointer-events: none;
+}
+
+.main-product-3d[camera-controls] {
+  pointer-events: auto;
+}
+
+/* 6. Foreground accessories */
+.accessories-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 110;
+  transition: transform 0.1s ease-out;
+}
+
+.accessory {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  outline: none;
+  --progress-bar-color: transparent;
+  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.4));
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.a1 { top: 20%; left: 32%; width: 140px; height: 140px; }
+.a2 { top: 62%; left: 38%; width: 90px; height: 90px; }
+.a3 { top: 25%; left: 66%; width: 160px; height: 160px; }
+.a4 { top: 12%; left: 48%; width: 110px; height: 110px; }
+.a5 { top: 78%; left: 24%; width: 100px; height: 100px; }
+.a6 { top: 48%; left: 72%; width: 130px; height: 130px; }
+.a7 { top: 16%; left: 38%; width: 75px; height: 75px; opacity: 0.65; }
+.a8 { top: 54%; left: 58%; width: 65px; height: 65px; opacity: 0.6; }
+.a9 { top: 82%; left: 36%; width: 70px; height: 70px; opacity: 0.7; }
+
+/* 7. Right Column Layout & Switcher Card Carousel */
+.hero-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  text-align: right;
+  height: 100%;
+  padding: 5rem 0;
+  z-index: 100;
+  width: 400px;
+  pointer-events: none;
+  flex: 1;
+}
+
+.product-carousel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: flex-end;
+  pointer-events: auto;
+}
+
+.carousel-cards {
+  display: flex;
+  gap: 1rem;
+}
+
+.card {
+  background: var(--bg-glass-card);
+  border: 1px solid var(--border-glass);
+  padding: 1.25rem 1rem;
+  padding-top: 5rem;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  width: 140px;
+  position: relative;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.card:hover {
+  background: rgba(20, 42, 32, 0.65);
+  border-color: rgba(16, 185, 129, 0.4);
+  transform: translateY(-5px);
+}
+
+.card.active {
+  border-color: var(--accent-primary);
+  background: rgba(16, 185, 129, 0.08);
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.15);
+}
+
+.card img {
+  width: 130px;
+  height: auto;
+  margin-top: -7.5rem;
+  filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.4));
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: block;
+  pointer-events: none;
+}
+
+.card:hover img {
+  transform: translateY(-20px) rotate(-10deg) scale(1.1);
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.75rem;
+  width: 100%;
+}
+
+.card-info span:first-child {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.card-info span:last-child {
+  color: var(--accent-secondary);
+  font-weight: 600;
+  margin-top: 0.2rem;
+}
+
+.carousel-nav {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.nav-arrow {
+  background: var(--bg-glass-card);
+  border: 1px solid var(--border-glass);
+  color: white;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.nav-arrow:hover {
+  background: var(--accent-primary);
+  color: #05140f;
+  border-color: var(--accent-primary);
+  transform: scale(1.1);
+}
+
+.side-title {
+  align-self: flex-end;
+  text-align: right;
+}
+
+/* 8. Responsive overrides for 3D Hero */
+@media (max-width: 1200px) {
+  .main-product-3d {
+    width: 100%;
+    height: 100%;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%) rotate(25deg);
+  }
+  
+  .hero {
+    height: auto;
+    min-height: 100vh;
+    padding-top: 8.5rem;
+    padding-bottom: 4rem;
+  }
+  
+  .hero-3d-content {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    height: auto;
+  }
+  
+  .hero-left {
+    align-items: center;
+    text-align: center;
+    max-width: 100%;
+    padding: 0;
+    gap: 1.5rem;
+  }
+  
+  .hero-left .description {
+    max-width: 550px;
+    font-size: 1rem;
+  }
+  
+  .cta-group {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .award-badge {
+    margin-top: 1.5rem;
+    justify-content: center;
+  }
+  
+  .hero-center {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    margin: 1.5rem 0;
+  }
+  
+  .hero-right {
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    padding: 0;
+    gap: 2rem;
+  }
+  
+  .product-carousel {
+    align-items: center;
+  }
+  
+  .side-title {
+    align-self: center;
+    text-align: center;
+  }
+  
+  /* Scale down accessories and tags on tablet & mobile so they surround the onion without cluttering */
+  .accessory {
+    width: 50px;
+    height: 50px;
+  }
+  .a1 { width: 70px; height: 70px; }
+  .a2 { width: 45px; height: 45px; }
+  .a3 { width: 85px; height: 85px; }
+  .a4 { width: 55px; height: 55px; }
+  .a5 { width: 50px; height: 50px; }
+  .a6 { width: 65px; height: 65px; }
+  .a7 { width: 40px; height: 40px; opacity: 0.65; }
+  .a8 { width: 35px; height: 35px; opacity: 0.6; }
+  .a9 { width: 40px; height: 40px; opacity: 0.7; }
+
+  .tag {
+    width: 35px;
+    height: 35px;
+  }
+  .t1 { width: 35px; height: 35px; }
+  .t2 { width: 60px; height: 60px; }
+  .t3 { width: 45px; height: 45px; }
+  .t4 { width: 50px; height: 50px; }
+}
+
+@media (max-width: 480px) {
+  .main-title, .side-title {
+    font-size: 3.2rem;
+  }
+  
+  .hero-left .description {
+    font-size: 0.95rem;
+  }
+  
+  .hero-center {
+    height: 280px;
+    margin: 1rem 0;
+  }
+  
+  .card {
+    width: 110px;
+    padding-top: 3.5rem;
+    padding-bottom: 1rem;
+    gap: 0.8rem;
+    border-radius: 18px;
+  }
+  
+  .card img {
+    width: 90px;
+    margin-top: -5.5rem;
+  }
+  
+  .card-info {
+    font-size: 0.7rem;
+  }
+  
+  .primary-btn {
+    padding: 0.35rem 0.35rem 0.35rem 1.25rem;
+    font-size: 0.9rem;
+  }
+  
+  .plus-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 1.1rem;
+  }
+
+  /* Shrink accessories and tags further on tiny screens */
+  .accessory {
+    width: 35px;
+    height: 35px;
+  }
+  .a1 { width: 50px; height: 50px; }
+  .a3 { width: 60px; height: 60px; }
+  .a6 { width: 45px; height: 45px; }
+  .a7, .a8, .a9 { width: 25px; height: 25px; }
+
+  .tag {
+    width: 25px;
+    height: 25px;
+  }
+  .t2 { width: 40px; height: 40px; }
+  .t4 { width: 35px; height: 35px; }
 }
