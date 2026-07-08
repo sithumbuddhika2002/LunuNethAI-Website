@@ -70,6 +70,7 @@ export default function App() {
 
   const isSwitching = useRef(false);
   const switchSpinRef = useRef(0);
+  const isUserInteractingRef = useRef(false);
 
   // Form states
   const [formData, setFormData] = useState({ name: '', email: '', role: 'Farmer', message: '' });
@@ -360,6 +361,8 @@ export default function App() {
     window.addEventListener('mousemove', handleMouseMove);
 
     let animationFrameId: number;
+    let animatedTheta = 0;
+    let animatedPhi = 90;
 
     const animate = () => {
       const time = Date.now() * 0.001;
@@ -367,8 +370,25 @@ export default function App() {
       currentMouse.x += (mouse.x - currentMouse.x) * 0.05;
       currentMouse.y += (mouse.y - currentMouse.y) * 0.05;
 
-      if (modelViewerRef.current) {
-        modelViewerRef.current.cameraOrbit = `${(currentMouse.x * 40) + switchSpinRef.current}deg ${90 + (currentMouse.y * 20)}deg 380%`;
+      const modelViewer = modelViewerRef.current;
+      if (modelViewer) {
+        if (isUserInteractingRef.current) {
+          try {
+            const orbit = modelViewer.getCameraOrbit();
+            animatedTheta = (orbit.theta * 180) / Math.PI;
+            animatedPhi = (orbit.phi * 180) / Math.PI;
+          } catch (e) {
+            // Ignore error if model-viewer is not fully initialized
+          }
+        } else {
+          const targetTheta = (currentMouse.x * 40) + switchSpinRef.current;
+          const targetPhi = 90 + (currentMouse.y * 20);
+
+          animatedTheta += (targetTheta - animatedTheta) * 0.08;
+          animatedPhi += (targetPhi - animatedPhi) * 0.08;
+
+          modelViewer.cameraOrbit = `${animatedTheta}deg ${animatedPhi}deg 380%`;
+        }
       }
 
       if (accessoriesFGRef.current) {
@@ -869,7 +889,13 @@ export default function App() {
                 <model-viewer id="product-model" ref={modelViewerRef} src="/model/onion.glb" alt="LunuNeth AI Onion 3D Model" camera-controls
                   disable-zoom shadow-intensity="0" environment-image="neutral" exposure="1.5"
                   interaction-prompt="none" camera-orbit="0deg 90deg 380%" field-of-view="30deg"
-                  className="main-product-3d">
+                  className="main-product-3d"
+                  onPointerDown={() => { isUserInteractingRef.current = true; }}
+                  onPointerUp={() => { isUserInteractingRef.current = false; }}
+                  onPointerLeave={() => { isUserInteractingRef.current = false; }}
+                  onTouchStart={() => { isUserInteractingRef.current = true; }}
+                  onTouchEnd={() => { isUserInteractingRef.current = false; }}
+                >
                 </model-viewer>
 
                 {/* 3e. Foreground accessories */}
