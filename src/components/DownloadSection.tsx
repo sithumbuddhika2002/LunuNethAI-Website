@@ -94,12 +94,11 @@ export default function DownloadSection() {
             <ExternalLink className="w-4 h-4" /> Join TestFlight Beta
           </a>
           <a 
-            href="downloads/lununeth_ai_latest.ipa" 
+            href="itms-services://?action=download-manifest&url=https://lununethai.com/downloads/ios/manifest.plist" 
             className="outline-btn"
             style={{ justifyContent: 'center', borderColor: 'rgba(0, 255, 135, 0.3)', color: 'var(--accent-secondary)' }}
-            download
           >
-            <Download className="w-4 h-4" /> Download iOS IPA
+            <Download className="w-4 h-4" /> Install iOS App (OTA)
           </a>
         </div>
 
@@ -117,7 +116,7 @@ export default function DownloadSection() {
           <strong>Installation guidelines:</strong>
           <ul style={{ listStyleType: 'disc', marginLeft: '1.25rem', marginTop: '0.25rem', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
             <li><strong>TestFlight:</strong> Click the beta link to open directly in iOS TestFlight app.</li>
-            <li><strong>IPA File:</strong> Download and sign using utility tools like <em>AltStore</em> or <em>Sideloadly</em>.</li>
+            <li><strong>Direct OTA Install:</strong> Tap "Install iOS App" directly on your iOS device. After installation, navigate to <em>Settings &gt; General &gt; VPN &amp; Device Management</em> to Trust the enterprise profile.</li>
           </ul>
         </div>
       </div>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>items</key>
+    <array>
+        <dict>
+            <key>assets</key>
+            <array>
+                <dict>
+                    <key>kind</key>
+                    <string>software-package</string>
+                    <key>url</key>
+                    <!-- IMPORTANT: Replace with the actual HTTPS URL where your .ipa is hosted -->
+                    <string>https://lununethai.com/downloads/ios/lununeth_ai_latest.ipa</string>
+                </dict>
+                <!-- Optional: Display Image (57x57) used during download -->
+                <dict>
+                    <key>kind</key>
+                    <string>display-image</string>
+                    <key>url</key>
+                    <string>https://lununethai.com/logo.jpeg</string>
+                </dict>
+                <!-- Optional: Full Size Image (512x512) used in App Store/iTunes -->
+                <dict>
+                    <key>kind</key>
+                    <string>full-size-image</string>
+                    <key>url</key>
+                    <string>https://lununethai.com/logo.jpeg</string>
+                </dict>
+            </array>
+            <key>metadata</key>
+            <dict>
+                <key>bundle-identifier</key>
+                <!-- IMPORTANT: Replace with your exact App Bundle ID (e.g. com.lununeth.ai) -->
+                <string>com.lununeth.ai</string>
+                <key>bundle-version</key>
+                <!-- Replace with your App Version -->
+                <string>1.0.0</string>
+                <key>kind</key>
+                <string>software</string>
+                <key>title</key>
+                <!-- Replace with your App Name -->
+                <string>LunuNeth AI</string>
+            </dict>
+        </dict>
+    </array>
+</dict>
+</plist>

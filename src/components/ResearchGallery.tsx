@@ -1,7 +1,21 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { Play, Image as ImageIcon, Video, Layers, Eye } from 'lucide-react';
+import { 
+  Play, 
+  Eye, 
+  Search, 
+  SlidersHorizontal, 
+  Info, 
+  Terminal, 
+  Download, 
+  Copy, 
+  CheckCircle2, 
+  ChevronDown, 
+  ChevronUp, 
+  X,
+  Database
+} from 'lucide-react';
 
 gsap.registerPlugin(useGSAP);
 
@@ -17,9 +31,17 @@ interface GalleryItem {
 }
 
 export default function ResearchGallery() {
-  const [filter, setFilter] = useState<'all' | 'image' | 'video'>('all');
-  const [selectedVideo, setSelectedVideo] = useState<GalleryItem | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'vision' | 'field' | 'data'>('all');
+  const [typeFilter, setTypeFilter] = useState<'all' | 'image' | 'video'>('all');
+  const [visibleCount, setVisibleCount] = useState(6);
+  const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
+  const [jsonExpanded, setJsonExpanded] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastVisible, setToastVisible] = useState(false);
+
   const containerRef = useRef<HTMLDivElement>(null);
+  const toastTimeoutRef = useRef<number | null>(null);
 
   const galleryItems: GalleryItem[] = [
     {
@@ -30,17 +52,13 @@ export default function ResearchGallery() {
       desc: 'Video capture demonstrating PyTorch pest detection model processing thrips target coordinates on leaves.',
       badge: 'Model Inference Log',
       svgMedia: (
-        <svg viewBox="0 0 320 200" fill="none">
+        <svg viewBox="0 0 320 200" fill="none" className="w-full h-full">
           <rect width="320" height="200" fill="#0c101b" />
           <rect x="20" y="20" width="280" height="160" fill="#082218" opacity="0.4" />
-          {/* Bounding box vectors */}
           <rect x="70" y="50" width="80" height="70" stroke="#ef4444" strokeWidth="1.5" fill="rgba(239,68,68,0.05)" />
           <text x="70" y="44" fill="#ef4444" fontFamily="monospace" fontSize="9" fontWeight="bold">Thrips 96.4%</text>
-          
           <rect x="190" y="100" width="60" height="50" stroke="#f59e0b" strokeWidth="1.5" fill="rgba(245,158,11,0.05)" />
           <text x="190" y="94" fill="#f59e0b" fontFamily="monospace" fontSize="9" fontWeight="bold">Thrips 88.2%</text>
-
-          {/* Code log overlay in background */}
           <text x="25" y="150" fill="#10b981" fontFamily="monospace" fontSize="7" opacity="0.6">[INFO] Box coordinates extracted...</text>
           <text x="25" y="160" fill="#10b981" fontFamily="monospace" fontSize="7" opacity="0.6">[INFO] FPS: 24.8 | Confidence threshold: 0.7</text>
         </svg>
@@ -54,15 +72,12 @@ export default function ResearchGallery() {
       desc: 'Thermal heatmap mapping showing where the convolutional neural network focuses when identifying Potassium deficiency.',
       badge: 'Grad-CAM Video Log',
       svgMedia: (
-        <svg viewBox="0 0 320 200" fill="none">
+        <svg viewBox="0 0 320 200" fill="none" className="w-full h-full">
           <rect width="320" height="200" fill="#04120a" />
-          {/* Leaf vector outline */}
           <path d="M 160 180 C 190 140 220 90 200 40 C 190 20 175 10 160 2 C 145 10 130 20 120 40 C 100 90 130 140 160 180 Z" fill="rgba(16, 185, 129, 0.15)" stroke="rgba(16, 185, 129, 0.4)" strokeWidth="1.5" />
-          {/* Heatmap rings */}
           <ellipse cx="160" cy="80" rx="45" ry="30" fill="rgba(239, 68, 68, 0.3)" />
           <ellipse cx="160" cy="80" rx="30" ry="20" fill="rgba(245, 158, 11, 0.5)" />
           <ellipse cx="160" cy="80" rx="15" ry="10" fill="rgba(239, 68, 68, 0.7)" />
-          {/* Bounding pointer */}
           <path d="M 160 80 L 250 80" stroke="rgba(255, 255, 255, 0.4)" strokeWidth="1" strokeDasharray="2 2" />
           <rect x="250" y="70" width="60" height="20" rx="4" fill="rgba(0,0,0,0.8)" />
           <text x="255" y="83" fill="#f8fafc" fontFamily="monospace" fontSize="8">Deficient Focus</text>
@@ -73,29 +88,22 @@ export default function ResearchGallery() {
       id: 6,
       type: 'video',
       category: 'data',
-      title: 'AgriBot BERT Inten Classification Logs',
+      title: 'AgriBot BERT Intent Classification Logs',
       desc: 'Real-time classification training dashboard showing BERT model intent categorizations.',
       badge: 'BERT Analytics Video',
       svgMedia: (
-        <svg viewBox="0 0 320 200" fill="none">
+        <svg viewBox="0 0 320 200" fill="none" className="w-full h-full">
           <rect width="320" height="200" fill="#0d1117" />
-          {/* Simulated chart blocks representing intent classifications */}
           <rect x="40" y="40" width="120" height="18" rx="2" fill="rgba(16, 185, 129, 0.15)" stroke="rgba(16, 185, 129, 0.4)" />
           <text x="48" y="52" fill="#10b981" fontFamily="monospace" fontSize="8">#Intent: DiseaseInfo - 98.4%</text>
-          
           <rect x="40" y="65" width="160" height="18" rx="2" fill="rgba(16, 185, 129, 0.15)" stroke="rgba(16, 185, 129, 0.4)" />
           <text x="48" y="77" fill="#10b981" fontFamily="monospace" fontSize="8">#Intent: PestControlTips - 95.8%</text>
-
           <rect x="40" y="90" width="80" height="18" rx="2" fill="rgba(239, 68, 68, 0.15)" stroke="rgba(239, 68, 68, 0.3)" />
           <text x="48" y="102" fill="#ef4444" fontFamily="monospace" fontSize="8">#Intent: WeatherForecast - 44.1%</text>
-
-          {/* Graph node representations */}
           <circle cx="250" cy="140" r="18" fill="#1e1b4b" stroke="#4f46e5" />
           <text x="242" y="143" fill="#f8fafc" fontFamily="monospace" fontSize="9" fontWeight="bold">BERT</text>
-          
           <path d="M 232 140 L 180 140" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
           <circle cx="180" cy="140" r="8" fill="#065f46" stroke="#10b981" />
-          
           <path d="M 268 140 L 295 120" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
           <circle cx="295" cy="120" r="8" fill="#7c2d12" stroke="#ea580c" />
         </svg>
@@ -292,210 +300,394 @@ export default function ResearchGallery() {
     }
   ];
 
-  // Filter functionality with GSAP transitions
+  // Toast helper
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setToastVisible(true);
+    if (toastTimeoutRef.current) {
+      window.clearTimeout(toastTimeoutRef.current);
+    }
+    toastTimeoutRef.current = window.setTimeout(() => {
+      setToastVisible(false);
+    }, 3000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (toastTimeoutRef.current) {
+        window.clearTimeout(toastTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Filter items based on search query, category filter, and media type filter
+  const filteredItems = galleryItems.filter(item => {
+    const matchesSearch = 
+      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.desc.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.badge.toLowerCase().includes(searchQuery.toLowerCase());
+      
+    const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
+    const matchesType = typeFilter === 'all' || item.type === typeFilter;
+    
+    return matchesSearch && matchesCategory && matchesType;
+  });
+
+  // Stagger entry animations on query or filter changes
   useGSAP(() => {
     gsap.fromTo('.gallery-card-anim', 
       {
         opacity: 0,
-        scale: 0.9,
-        y: 20
+        y: 20,
+        scale: 0.97
       },
       {
         opacity: 1,
-        scale: 1,
         y: 0,
-        duration: 0.5,
-        stagger: 0.08,
+        scale: 1,
+        duration: 0.45,
+        stagger: 0.05,
         ease: 'power2.out',
         overwrite: 'auto'
       }
     );
-  }, { dependencies: [filter], scope: containerRef });
+  }, { dependencies: [searchQuery, categoryFilter, typeFilter, visibleCount], scope: containerRef });
 
-  const filteredItems = galleryItems.filter(item => {
-    if (filter === 'all') return true;
-    return item.type === filter;
-  });
+  const handleLoadMore = () => {
+    setVisibleCount(prev => prev + 6);
+  };
+
+  // Reset pagination when search or filters change
+  useEffect(() => {
+    setVisibleCount(6);
+  }, [searchQuery, categoryFilter, typeFilter]);
+
+  // Mock specs details depending on item category
+  const getItemSpecs = (item: GalleryItem) => {
+    if (item.category === 'vision') {
+      return [
+        { label: 'Model Architecture', value: item.title.includes('R-CNN') ? 'Faster R-CNN ResNet50' : item.title.includes('Grad-CAM') ? 'EfficientNet-B4 CNN' : 'YOLOv8 Edge' },
+        { label: 'Target Coordinates', value: 'Coco-annotations [.json]' },
+        { label: 'Avg Inference Speed', value: item.title.includes('Edge') ? '15.4 ms (mobile)' : '24.8 FPS (server)' },
+        { label: 'Precision Metric (mAP50)', value: item.title.includes('Inference') ? '94.2%' : '96.8%' }
+      ];
+    } else if (item.category === 'field') {
+      return [
+        { label: 'Protocol / Sensor', value: item.title.includes('Drone') ? 'Multi-spectral sensor' : 'IoT Soil humidity probe' },
+        { label: 'Connection Standard', value: 'LoRaWAN node protocol' },
+        { label: 'Sampling Interval', value: 'Every 15 minutes' },
+        { label: 'Signal Quality (RSSI)', value: '-68 dBm (stable)' }
+      ];
+    } else {
+      return [
+        { label: 'Data Model Focus', value: item.title.includes('BERT') ? 'Transformer classification' : 'Microclimate predictive model' },
+        { label: 'Inference Engine', value: 'HuggingFace pipelines' },
+        { label: 'Data Set Volume', value: '14,200 active logs' },
+        { label: 'Classification Accuracy', value: '98.4% F1-Score' }
+      ];
+    }
+  };
+
+  // Mock JSON telemetry representation
+  const getMockJson = (item: GalleryItem) => {
+    return JSON.stringify({
+      log_metadata: {
+        id: `LUNUNETH-LOG-${1000 + item.id}`,
+        timestamp: "2026-06-25T10:15:30Z",
+        category: item.category.toUpperCase(),
+        log_type: item.type.toUpperCase()
+      },
+      telemetry: {
+        node_status: "ACTIVE",
+        pipeline_integrity: 1.00,
+        data_packet_loss: "0.00%",
+        battery_voltage: item.category === 'field' ? "3.62 V" : undefined
+      },
+      model_metrics: item.category === 'vision' ? {
+        confidence_threshold: 0.65,
+        detections_in_frame: 2,
+        bounding_box_format: "xyxy"
+      } : undefined
+    }, null, 2);
+  };
 
   return (
-    <div ref={containerRef} style={{ width: '100%' }}>
-      {/* Category Selectors */}
-      <div className="gallery-filter-container">
-        <button
-          onClick={() => setFilter('all')}
-          className="solid-btn"
-          style={{
-            background: filter === 'all' ? 'var(--accent-primary)' : 'rgba(255,255,255,0.03)',
-            color: filter === 'all' ? '#05140d' : 'var(--text-secondary)',
-            border: '1px solid var(--border-glass)',
-            boxShadow: filter === 'all' ? '0 0 15px var(--accent-glow)' : 'none',
-            padding: '0.5rem 1.5rem',
-            fontSize: '0.9rem'
-          }}
-        >
-          <Layers className="w-4 h-4" /> All Research Logs
-        </button>
-        <button
-          onClick={() => setFilter('image')}
-          className="solid-btn"
-          style={{
-            background: filter === 'image' ? 'var(--accent-primary)' : 'rgba(255,255,255,0.03)',
-            color: filter === 'image' ? '#05140d' : 'var(--text-secondary)',
-            border: '1px solid var(--border-glass)',
-            boxShadow: filter === 'image' ? '0 0 15px var(--accent-glow)' : 'none',
-            padding: '0.5rem 1.5rem',
-            fontSize: '0.9rem'
-          }}
-        >
-          <ImageIcon className="w-4 h-4" /> Image Gallery
-        </button>
-        <button
-          onClick={() => setFilter('video')}
-          className="solid-btn"
-          style={{
-            background: filter === 'video' ? 'var(--accent-primary)' : 'rgba(255,255,255,0.03)',
-            color: filter === 'video' ? '#05140d' : 'var(--text-secondary)',
-            border: '1px solid var(--border-glass)',
-            boxShadow: filter === 'video' ? '0 0 15px var(--accent-glow)' : 'none',
-            padding: '0.5rem 1.5rem',
-            fontSize: '0.9rem'
-          }}
-        >
-          <Video className="w-4 h-4" /> Video Logs
-        </button>
+    <div ref={containerRef} className="gallery-layout-container">
+      
+      {/* Search and Filters Layout */}
+      <div className="gallery-search-filter-card">
+        {/* Search Input */}
+        <div className="search-bar-wrapper">
+          <Search className="search-icon" />
+          <input 
+            type="text" 
+            placeholder="Search logs by keyword (e.g. YOLO, thrips, Grad-CAM, telemetry...)" 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="search-input"
+          />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery('')} className="search-clear-btn">
+              &times;
+            </button>
+          )}
+        </div>
+
+        {/* Double-Axis Filters */}
+        <div className="filter-controls-row">
+          {/* Category Filter */}
+          <div className="filter-group">
+            <span className="filter-group-label"><SlidersHorizontal size={14} /> Domain Category</span>
+            <div className="filter-buttons">
+              <button 
+                onClick={() => setCategoryFilter('all')}
+                className={`filter-pill ${categoryFilter === 'all' ? 'active' : ''}`}
+              >
+                All Domains
+              </button>
+              <button 
+                onClick={() => setCategoryFilter('vision')}
+                className={`filter-pill ${categoryFilter === 'vision' ? 'active' : ''}`}
+              >
+                Computer Vision
+              </button>
+              <button 
+                onClick={() => setCategoryFilter('field')}
+                className={`filter-pill ${categoryFilter === 'field' ? 'active' : ''}`}
+              >
+                Field Telemetry
+              </button>
+              <button 
+                onClick={() => setCategoryFilter('data')}
+                className={`filter-pill ${categoryFilter === 'data' ? 'active' : ''}`}
+              >
+                Analytics & Logs
+              </button>
+            </div>
+          </div>
+
+          {/* Media Type Filter */}
+          <div className="filter-group">
+            <span className="filter-group-label"><Database size={14} /> Log Type</span>
+            <div className="filter-buttons">
+              <button 
+                onClick={() => setTypeFilter('all')}
+                className={`filter-pill ${typeFilter === 'all' ? 'active' : ''}`}
+              >
+                All Logs
+              </button>
+              <button 
+                onClick={() => setTypeFilter('image')}
+                className={`filter-pill ${typeFilter === 'image' ? 'active' : ''}`}
+              >
+                Images
+              </button>
+              <button 
+                onClick={() => setTypeFilter('video')}
+                className={`filter-pill ${typeFilter === 'video' ? 'active' : ''}`}
+              >
+                Videos
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Media Grid */}
+      {/* Results Count Info */}
+      <div className="results-count-bar">
+        Showing <strong>{Math.min(filteredItems.length, visibleCount)}</strong> of <strong>{filteredItems.length}</strong> matching research logs
+      </div>
+
+      {/* Empty State */}
+      {filteredItems.length === 0 && (
+        <div className="gallery-empty-state">
+          <Info className="empty-icon" />
+          <h3>No matching research logs found</h3>
+          <p>Try clearing your search query or adjusting filters to find what you are looking for.</p>
+          <button 
+            onClick={() => { setSearchQuery(''); setCategoryFilter('all'); setTypeFilter('all'); }}
+            className="solid-btn"
+            style={{ marginTop: '1rem', padding: '0.6rem 1.5rem', fontSize: '0.85rem' }}
+          >
+            Reset Filters & Search
+          </button>
+        </div>
+      )}
+
+      {/* Grid of Cards */}
       <div className="gallery-grid">
-        {filteredItems.map(item => (
+        {filteredItems.slice(0, visibleCount).map((item) => (
           <div key={item.id} className="gallery-card gallery-card-anim">
             <div className="gallery-card-badge">{item.badge}</div>
             
-            <div className="gallery-media-wrapper" style={{ aspectRatio: item.imagePath ? '3/5' : '16/10' }}>
+            <div className="gallery-media-wrapper">
               {item.imagePath ? (
                 <img 
                   src={item.imagePath} 
                   alt={item.title} 
                   className="w-full h-full object-cover" 
+                  loading="lazy"
                 />
               ) : (
                 item.svgMedia
               )}
               
-              {/* If Video, show Play Button Overlay */}
-              {item.type === 'video' && (
-                <div 
-                  className="play-btn-overlay"
-                  onClick={() => setSelectedVideo(item)}
-                >
-                  <div className="play-icon-box flex-center">
-                    <Play className="w-5 h-5 fill-current" />
-                  </div>
+              {/* Eye Icon Hover Overlay */}
+              <div 
+                className="play-btn-overlay cursor-pointer"
+                onClick={() => { setSelectedItem(item); setJsonExpanded(false); }}
+              >
+                <div className="play-icon-box flex-center">
+                  {item.type === 'video' ? <Play className="w-5 h-5 fill-current" /> : <Eye className="w-5 h-5" />}
                 </div>
-              )}
+              </div>
             </div>
 
             <div className="gallery-card-info">
               <h4 className="gallery-card-title">{item.title}</h4>
               <p className="gallery-card-desc">{item.desc}</p>
+              <button 
+                onClick={() => { setSelectedItem(item); setJsonExpanded(false); }}
+                className="view-logs-link"
+              >
+                Inspect Telemetry Logs &rarr;
+              </button>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Simulated Video Player Modal */}
-      {selectedVideo && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(0, 0, 0, 0.85)',
-          backdropFilter: 'blur(8px)',
-          zIndex: 200,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '2rem'
-        }} onClick={() => setSelectedVideo(null)}>
-          <div 
-            style={{
-              width: '100%',
-              maxWidth: selectedVideo.imagePath ? '380px' : '700px',
-              background: 'hsl(var(--bg-dark-raw))',
-              border: '1px solid var(--border-glass)',
-              borderRadius: '1.5rem',
-              overflow: 'hidden',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)',
-              transition: 'max-width 0.3s ease-out'
-            }}
-            onClick={e => e.stopPropagation()}
-          >
+      {/* Load More Pagination */}
+      {filteredItems.length > visibleCount && (
+        <div className="flex-center" style={{ marginTop: '4rem' }}>
+          <button onClick={handleLoadMore} className="solid-btn load-more-btn">
+            Load More Research Logs
+          </button>
+        </div>
+      )}
+
+      {/* Premium Detail Modal Portal */}
+      {selectedItem && (
+        <div className="modal-backdrop-overlay" onClick={() => setSelectedItem(null)}>
+          <div className="modal-panel-container" onClick={e => e.stopPropagation()}>
+            
             {/* Modal Header */}
-            <div style={{
-              padding: '1.25rem 1.5rem',
-              borderBottom: '1px solid var(--border-glass)',
-              display: 'flex',
-              justifyContent: 'between',
-              alignItems: 'center'
-            }}>
-              <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Video className="w-4 h-4 text-emerald-400" />
-                {selectedVideo.title}
+            <div className="modal-header-row">
+              <div className="modal-title-group">
+                <span className="modal-category-badge">{selectedItem.category.toUpperCase()} LOG</span>
+                <h3>{selectedItem.title}</h3>
               </div>
-              <button 
-                onClick={() => setSelectedVideo(null)}
-                style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '1.2rem' }}
-              >
-                &times;
+              <button onClick={() => setSelectedItem(null)} className="modal-close-btn flex-center">
+                <X size={20} />
               </button>
             </div>
 
-            {/* Video Canvas Simulation */}
-            <div style={{ position: 'relative', width: '100%', aspectRatio: selectedVideo.imagePath ? '9/16' : '16/9', background: '#000', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ width: '100%', height: '100%', opacity: 0.85 }}>
-                {selectedVideo.imagePath ? (
-                  <img 
-                    src={selectedVideo.imagePath} 
-                    alt={selectedVideo.title} 
-                    style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
-                  />
-                ) : (
-                  <div style={{ transform: 'scale(1.5)', width: '100%', height: '100%' }}>
-                    {selectedVideo.svgMedia}
+            {/* Modal Scrollable Body Grid */}
+            <div className="modal-body-scrollable">
+              <div className="modal-grid-layout">
+                
+                {/* Column 1: Video Canvas or Image */}
+                <div className="modal-media-column">
+                  <div className="modal-media-canvas">
+                    {selectedItem.imagePath ? (
+                      <img 
+                        src={selectedItem.imagePath} 
+                        alt={selectedItem.title} 
+                        className="modal-image-display" 
+                      />
+                    ) : (
+                      <div className="modal-svg-display">
+                        {selectedItem.svgMedia}
+                      </div>
+                    )}
+                    
+                    {/* Simulated Player Controls overlay for videos */}
+                    {selectedItem.type === 'video' && (
+                      <div className="video-player-controls-overlay">
+                        <Play className="player-control-icon text-emerald-400" />
+                        <div className="player-progress-bar">
+                          <div className="player-progress-fill"></div>
+                        </div>
+                        <span className="player-time-code">00:48 / 02:15</span>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              
-              {/* Floating controls overlay */}
-              <div style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                width: '100%',
-                padding: '1rem',
-                background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem',
-                zIndex: 10
-              }}>
-                <Play className="w-5 h-5 text-emerald-400" />
-                <div style={{ flexGrow: 1, height: '4px', background: 'rgba(255,255,255,0.2)', borderRadius: '2px', position: 'relative', overflow: 'hidden' }}>
-                  <div style={{ width: '45%', height: '100%', background: 'var(--accent-primary)', position: 'absolute', left: 0, top: 0 }}></div>
+                  
+                  <p className="modal-media-description">
+                    <strong>Research Scope:</strong> {selectedItem.desc}
+                  </p>
                 </div>
-                <span style={{ fontSize: '0.75rem', fontFamily: 'monospace', color: 'var(--text-secondary)' }}>00:45 / 02:18</span>
+
+                {/* Column 2: Metadata & JSON Log Terminal */}
+                <div className="modal-specs-column">
+                  
+                  {/* Research specs table */}
+                  <div className="specs-table-card">
+                    <div className="specs-card-header"><Info size={14} /> Training / Device Specifications</div>
+                    <div className="specs-rows">
+                      {getItemSpecs(selectedItem).map((spec, i) => (
+                        <div key={i} className="specs-row">
+                          <span className="spec-label">{spec.label}</span>
+                          <span className="spec-value">{spec.value}</span>
+                        </div>
+                      ))}
+                      <div className="specs-row">
+                        <span className="spec-label">Telemetry Log Date</span>
+                        <span className="spec-value">June 25, 2026</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions buttons */}
+                  <div className="modal-actions-container">
+                    <button 
+                      onClick={() => showToast(`Dataset slice from "${selectedItem.title}" exported successfully!`)}
+                      className="solid-btn action-btn-glow"
+                    >
+                      <Download size={14} /> Export Dataset Slice
+                    </button>
+                    <button 
+                      onClick={() => {
+                        navigator.clipboard.writeText(`d:/git/LunuNethAI-Website/logs/LUNUNETH-LOG-${1000 + selectedItem.id}.json`);
+                        showToast("Log absolute path copied to clipboard!");
+                      }}
+                      className="outline-btn"
+                    >
+                      <Copy size={14} /> Copy Local Log Path
+                    </button>
+                  </div>
+
+                  {/* Collapsible JSON Log Terminal */}
+                  <div className="terminal-log-container">
+                    <button 
+                      className="terminal-header-toggle"
+                      onClick={() => setJsonExpanded(!jsonExpanded)}
+                    >
+                      <span className="flex-center" style={{ gap: '0.5rem' }}><Terminal size={13} /> Raw JSON Telemetry</span>
+                      {jsonExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                    </button>
+                    {jsonExpanded && (
+                      <pre className="terminal-code-block">
+                        <code>{getMockJson(selectedItem)}</code>
+                      </pre>
+                    )}
+                  </div>
+
+                </div>
+
               </div>
             </div>
 
-            {/* Modal Info Footer */}
-            <div style={{ padding: '1.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              <strong>Description:</strong> {selectedVideo.desc}
-              <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-secondary)', fontSize: '0.8rem' }}>
-                <Eye className="w-4 h-4" /> <span>Real-time test prediction logs compiled successfully.</span>
-              </div>
-            </div>
           </div>
         </div>
       )}
+
+      {/* Floating Success Toast */}
+      <div className={`floating-success-toast ${toastVisible ? 'visible' : ''}`}>
+        <CheckCircle2 size={16} className="toast-icon text-emerald-400" />
+        <span>{toastMessage}</span>
+      </div>
+
     </div>
   );
 }

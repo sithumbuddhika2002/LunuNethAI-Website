@@ -34,6 +34,7 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState<'home' | 'simulators' | 'gallery' | 'beta'>('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>('');
 
   // Form states
   const [formData, setFormData] = useState({ name: '', email: '', role: 'Farmer', message: '' });
@@ -42,29 +43,77 @@ export default function App() {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
+  const isClickNavigating = useRef(false);
+  const clickNavTimeoutRef = useRef<number | null>(null);
+  const pendingHashRef = useRef<string | null>(null);
+
+  // Clean up timeouts
+  useEffect(() => {
+    return () => {
+      if (clickNavTimeoutRef.current) {
+        window.clearTimeout(clickNavTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Handle pending scroll targets when transitioning back to the homepage
+  useEffect(() => {
+    if (currentPage === 'home' && pendingHashRef.current) {
+      const hash = pendingHashRef.current;
+      pendingHashRef.current = null;
+      
+      // Delay slightly to allow the home page components to mount and stabilize in the DOM
+      const timer = setTimeout(() => {
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 250);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [currentPage]);
 
   // Router-like function
   const navigateTo = (page: 'home' | 'simulators' | 'gallery' | 'beta', hash?: string) => {
     setCurrentPage(page);
     setMobileMenuOpen(false);
     
+    // Set click navigating to true to disable scroll-spy temporarily during transition
+    isClickNavigating.current = true;
+    if (clickNavTimeoutRef.current) {
+      window.clearTimeout(clickNavTimeoutRef.current);
+    }
+
     if (page === 'home') {
       if (hash) {
-        setTimeout(() => {
+        setActiveSection(hash);
+        if (currentPage === 'home') {
+          // If already on the home page, scroll immediately
           const element = document.getElementById(hash);
           if (element) {
             element.scrollIntoView({ behavior: 'smooth' });
           }
-        }, 100);
+        } else {
+          // Save the hash to be scrolled to after page transition mounts the home page elements
+          pendingHashRef.current = hash;
+        }
       } else {
+        setActiveSection('');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     } else {
+      setActiveSection('');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    // Re-enable scroll spy after scroll animation finishes (~1000ms)
+    clickNavTimeoutRef.current = window.setTimeout(() => {
+      isClickNavigating.current = false;
+    }, 1000);
   };
 
-  // Handle navbar scroll background change
+  // Handle navbar scroll background change and active section tracking
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -72,10 +121,27 @@ export default function App() {
       } else {
         setScrolled(false);
       }
+
+      // If a click navigation is active, don't update activeSection based on scroll events
+      if (isClickNavigating.current) return;
+
+      if (currentPage === 'home') {
+        const teamEl = document.getElementById('team');
+        const contactEl = document.getElementById('contact');
+        const scrollPosition = window.scrollY + 250; // offset for nav height
+
+        if (contactEl && scrollPosition >= contactEl.offsetTop) {
+          setActiveSection('contact');
+        } else if (teamEl && scrollPosition >= teamEl.offsetTop) {
+          setActiveSection('team');
+        } else {
+          setActiveSection('');
+        }
+      }
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [currentPage]);
 
   // GSAP Entrance Animations
   useGSAP(() => {
@@ -263,6 +329,15 @@ export default function App() {
             <li>
               <a 
                 href="#" 
+                className={currentPage === 'home' && activeSection === '' ? 'active' : ''} 
+                onClick={(e) => { e.preventDefault(); navigateTo('home'); }}
+              >
+                Home
+              </a>
+            </li>
+            <li>
+              <a 
+                href="#" 
                 className={currentPage === 'simulators' ? 'active' : ''} 
                 onClick={(e) => { e.preventDefault(); navigateTo('simulators'); }}
               >
@@ -281,7 +356,7 @@ export default function App() {
             <li>
               <a 
                 href="#" 
-                className={currentPage === 'home' && window.location.hash === '#team' ? 'active' : ''} 
+                className={currentPage === 'home' && activeSection === 'team' ? 'active' : ''} 
                 onClick={(e) => { e.preventDefault(); navigateTo('home', 'team'); }}
               >
                 Our Team
@@ -299,7 +374,7 @@ export default function App() {
             <li>
               <a 
                 href="#" 
-                className={currentPage === 'home' && window.location.hash === '#contact' ? 'active' : ''} 
+                className={currentPage === 'home' && activeSection === 'contact' ? 'active' : ''} 
                 onClick={(e) => { e.preventDefault(); navigateTo('home', 'contact'); }}
               >
                 Contact
@@ -324,19 +399,14 @@ export default function App() {
 
         {/* Mobile Dropdown */}
         {mobileMenuOpen && (
-          <div style={{ 
-            position: 'absolute', 
-            top: '100%', 
-            left: 0, 
-            width: '100%', 
-            background: 'rgba(10, 25, 18, 0.98)', 
-            borderBottom: '1px solid var(--border-glass)',
-            padding: '2rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1.5rem',
-            zIndex: 90
-          }}>
+          <div className="mobile-dropdown">
+            <a 
+              href="#" 
+              className={currentPage === 'home' && activeSection === '' ? 'active' : ''} 
+              onClick={(e) => { e.preventDefault(); navigateTo('home'); }}
+            >
+              Home
+            </a>
             <a 
               href="#" 
               className={currentPage === 'simulators' ? 'active' : ''} 
@@ -353,7 +423,7 @@ export default function App() {
             </a>
             <a 
               href="#" 
-              className={currentPage === 'home' ? 'active' : ''} 
+              className={currentPage === 'home' && activeSection === 'team' ? 'active' : ''} 
               onClick={(e) => { e.preventDefault(); navigateTo('home', 'team'); }}
             >
               Our Team
@@ -367,7 +437,7 @@ export default function App() {
             </a>
             <a 
               href="#" 
-              className={currentPage === 'home' ? 'active' : ''} 
+              className={currentPage === 'home' && activeSection === 'contact' ? 'active' : ''} 
               onClick={(e) => { e.preventDefault(); navigateTo('home', 'contact'); }}
             >
               Contact
