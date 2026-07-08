@@ -728,24 +728,6 @@ export default function App() {
                 Our Team
               </a>
             </li>
-            <li>
-              <a 
-                href="#" 
-                className={currentPage === 'beta' ? 'active' : ''} 
-                onClick={(e) => { e.preventDefault(); navigateTo('beta'); }}
-              >
-                Download
-              </a>
-            </li>
-            <li>
-              <a 
-                href="#" 
-                className={currentPage === 'home' && activeSection === 'contact' ? 'active' : ''} 
-                onClick={(e) => { e.preventDefault(); navigateTo('home', 'contact'); }}
-              >
-                Contact
-              </a>
-            </li>
           </ul>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -800,20 +782,6 @@ export default function App() {
               onClick={(e) => { e.preventDefault(); navigateTo('home', 'team'); }}
             >
               Our Team
-            </a>
-            <a 
-              href="#" 
-              className={currentPage === 'beta' ? 'active' : ''} 
-              onClick={(e) => { e.preventDefault(); navigateTo('beta'); }}
-            >
-              Download
-            </a>
-            <a 
-              href="#" 
-              className={currentPage === 'home' && activeSection === 'contact' ? 'active' : ''} 
-              onClick={(e) => { e.preventDefault(); navigateTo('home', 'contact'); }}
-            >
-              Contact
             </a>
           </div>
         )}
