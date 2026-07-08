@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Smartphone, Download, ShieldCheck, Cpu, Zap, X } from 'lucide-react';
+import { Download, ShieldCheck, Cpu, Zap, X } from 'lucide-react';
 
 export default function AndroidInstallPopup() {
   const [isVisible, setIsVisible] = useState(false);
@@ -12,11 +12,11 @@ export default function AndroidInstallPopup() {
     // const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     // const isWindows = /Windows/i.test(navigator.userAgent);
 
-    // 2. Check if user already dismissed or downloaded the app
-    const hasBeenDismissed = localStorage.getItem('lununeth_android_app_prompt_dismissed');
+    // 2. Check if the user already downloaded the app
+    const hasDownloaded = localStorage.getItem('lununeth_android_app_downloaded');
 
-    // Only show if the user is on Android and has not dismissed it before
-    if (isAndroid && !hasBeenDismissed) {
+    // Only show if the user is on Android and has not downloaded it yet
+    if (isAndroid && !hasDownloaded) {
       const timer = setTimeout(() => {
         setIsVisible(true);
       }, 1500); // 1.5 second delay for smooth appearance
@@ -26,14 +26,14 @@ export default function AndroidInstallPopup() {
   }, []);
 
   const handleDismiss = () => {
+    // Just close the popup for the current session/page view
     setIsVisible(false);
-    // Persist preference so the user is not repeatedly prompted
-    localStorage.setItem('lununeth_android_app_prompt_dismissed', 'true');
   };
 
   const handleInstallClick = () => {
-    // When they click Install, trigger the download automatically and hide popup
-    handleDismiss();
+    // Hide the popup and mark as downloaded in localStorage
+    setIsVisible(false);
+    localStorage.setItem('lununeth_android_app_downloaded', 'true');
   };
 
   if (!isVisible) return null;
@@ -52,8 +52,12 @@ export default function AndroidInstallPopup() {
 
         {/* Header */}
         <div className="install-popup-header">
-          <div className="install-popup-icon-wrapper">
-            <Smartphone className="w-10 h-10" />
+          <div className="install-popup-icon-wrapper" style={{ padding: '2px', overflow: 'hidden' }}>
+            <img 
+              src="/logo.jpeg" 
+              alt="LunuNeth AI Logo" 
+              style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} 
+            />
           </div>
           <h3 className="gradient-text install-popup-title">LunuNeth AI for Android</h3>
           <p className="install-popup-description">
