@@ -77,53 +77,13 @@ export default function TeamSection() {
     {
       id: 3,
       name: 'Sithum',
-      role: 'Deep Learning Developer (Vision)',
-      regNo: 'IT22226464',
-      componentName: 'Component 2: Thrips Pest Detection',
-      bio: 'Responsible for PyTorch object detection networks. Trained and validated Faster R-CNN on crop-thrips coordinates, using Sliced Aided Hyper Inference (SAHI) for small pest localization.',
-      skills: ['PyTorch DL', 'Object Localization', 'EfficientNet CAM', 'Model Optimization', 'YOLOv8 & SAHI', 'IPM Scaling'],
-      socials: { github: '#', linkedin: '#', email: 'mailto:sithum@lununeth.ai' },
-      linkedinAvatarUrl: 'https://media.licdn.com/dms/image/v2/D5603AQFNIsGUxXMm-w/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1731185198793?e=1783555200&v=beta&t=ldWbex9t--UaSQIWH6KTY2FtDflV3FnXqFRGPzLt1CI', // To import LinkedIn picture, paste the direct copied address here
-      avatar: (
-        <svg viewBox="0 0 100 100" className="team-avatar-svg">
-          <rect width="100" height="100" fill="#140a1b" />
-          <circle cx="50" cy="45" r="16" fill="rgba(167, 139, 250, 0.15)" stroke="#a78bfa" strokeWidth="1.5" />
-          <path d="M 28 80 C 28 65 38 61 50 61 C 62 61 72 65 72 80 Z" fill="rgba(167, 139, 250, 0.1)" stroke="#a78bfa" strokeWidth="1.5" />
-          <rect x="25" y="20" width="50" height="50" stroke="rgba(167, 139, 250, 0.25)" strokeWidth="1" fill="none" />
-          <path d="M 25 30 L 25 20 L 35 20 M 65 20 L 75 20 L 75 30 M 75 60 L 75 70 L 65 70 M 35 70 L 25 70 L 25 60" stroke="#a78bfa" strokeWidth="1.5" fill="none" />
-        </svg>
-      )
-    },
-    {
-      id: 4,
-      name: 'Senura',
-      role: 'Client App Developer (Mobile)',
-      regNo: 'IT22142528',
-      componentName: 'Component 4: Nutrient Deficiency Detection',
-      bio: 'Builds cross-platform UI features using Flutter. Connects SQLite on-device caches, optimizes local TFLite operations, and designed the leaf nutrient deficiency semantic classifier.',
-      skills: ['Flutter/Dart', 'Mobile DB Caching', 'TFLite Integration', 'Offline Inference', 'Feature Fusion', 'SHAP Explainability'],
-      socials: { github: '#', linkedin: '#', email: 'mailto:senura@lununeth.ai' },
-      linkedinAvatarUrl: 'https://media.licdn.com/dms/image/v2/D5603AQF7qbKa_plifA/profile-displayphoto-scale_400_400/B56ZwFtWFQHIAk-/0/1769622301545?e=1783555200&v=beta&t=wYjtBlZ1NXKUh_Mukaih0XXpizWOCDBzzjiW5VRgvVk', // To import LinkedIn picture, paste the direct copied address here
-      avatar: (
-        <svg viewBox="0 0 100 100" className="team-avatar-svg">
-          <rect width="100" height="100" fill="#04121b" />
-          <circle cx="50" cy="45" r="16" fill="rgba(14, 165, 233, 0.15)" stroke="#0ea5e9" strokeWidth="1.5" />
-          <path d="M 28 80 C 28 65 38 61 50 61 C 62 61 72 65 72 80 Z" fill="rgba(14, 165, 233, 0.1)" stroke="#0ea5e9" strokeWidth="1.5" />
-          <rect x="36" y="15" width="28" height="60" rx="3" stroke="rgba(14, 165, 233, 0.25)" strokeWidth="1.5" fill="none" />
-          <circle cx="50" cy="68" r="2" fill="#0ea5e9" opacity="0.5" />
-        </svg>
-      )
-    },
-    {
-      id: 5,
-      name: 'Kaveesha',
       role: 'Predictive Systems Developer',
       regNo: 'IT22087256',
       componentName: 'Component 3: Trilingual Chatbot & Context-Aware Diagnostics',
       bio: 'Architect of the Spatio-Temporal Graph Neural Network. Programs multi-agent forecast probabilities, MongoDB connections, and the trilingual chatbot conversational routing.',
       skills: ['GNN Modeling', 'Spatio-Temporal GNN', 'Database Clustering', 'Bayesian Networks', 'mBERT & Seq2Seq', 'NLP Diagnostics'],
-      socials: { github: '#', linkedin: '#', email: 'mailto:kaveesha@lununeth.ai' },
-      linkedinAvatarUrl: 'https://media.licdn.com/dms/image/v2/D5635AQEawBaMLJhMow/profile-framedphoto-shrink_400_400/profile-framedphoto-shrink_400_400/0/1734508366578?e=1782327600&v=beta&t=im2i7yNgXwkEuyzf2heJ6hqCnQQobsPqYCFsJIXVEzM', // To import LinkedIn picture, paste the direct copied address here
+      socials: { github: '#', linkedin: '#', email: 'mailto:sithum@lununeth.ai' },
+      linkedinAvatarUrl: 'https://media.licdn.com/dms/image/v2/D5603AQFNIsGUxXMm-w/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1731185198793?e=1783555200&v=beta&t=ldWbex9t--UaSQIWH6KTY2FtDflV3FnXqFRGPzLt1CI', // To import LinkedIn picture, paste the direct copied address here
       avatar: (
         <svg viewBox="0 0 100 100" className="team-avatar-svg">
           <rect width="100" height="100" fill="#1b1206" />
@@ -135,6 +95,46 @@ export default function TeamSection() {
           <line x1="50" y1="45" x2="25" y2="25" stroke="rgba(245, 158, 11, 0.3)" strokeWidth="1" />
           <line x1="50" y1="45" x2="75" y2="30" stroke="rgba(245, 158, 11, 0.3)" strokeWidth="1" />
           <line x1="50" y1="45" x2="70" y2="65" stroke="rgba(245, 158, 11, 0.3)" strokeWidth="1" />
+        </svg>
+      )
+    },
+    {
+      id: 4,
+      name: 'Senura',
+      role: 'Deep Learning Developer (Vision)',
+      regNo: 'IT22226464',
+      componentName: 'Component 2: Thrips Pest Detection',
+      bio: 'Responsible for PyTorch object detection networks. Trained and validated Faster R-CNN on crop-thrips coordinates, using Sliced Aided Hyper Inference (SAHI) for small pest localization.',
+      skills: ['PyTorch DL', 'Object Localization', 'EfficientNet CAM', 'Model Optimization', 'YOLOv8 & SAHI', 'IPM Scaling'],
+      socials: { github: '#', linkedin: '#', email: 'mailto:senura@lununeth.ai' },
+      linkedinAvatarUrl: 'https://media.licdn.com/dms/image/v2/D5603AQF7qbKa_plifA/profile-displayphoto-scale_400_400/B56ZwFtWFQHIAk-/0/1769622301545?e=1783555200&v=beta&t=wYjtBlZ1NXKUh_Mukaih0XXpizWOCDBzzjiW5VRgvVk', // To import LinkedIn picture, paste the direct copied address here
+      avatar: (
+        <svg viewBox="0 0 100 100" className="team-avatar-svg">
+          <rect width="100" height="100" fill="#140a1b" />
+          <circle cx="50" cy="45" r="16" fill="rgba(167, 139, 250, 0.15)" stroke="#a78bfa" strokeWidth="1.5" />
+          <path d="M 28 80 C 28 65 38 61 50 61 C 62 61 72 65 72 80 Z" fill="rgba(167, 139, 250, 0.1)" stroke="#a78bfa" strokeWidth="1.5" />
+          <rect x="25" y="20" width="50" height="50" stroke="rgba(167, 139, 250, 0.25)" strokeWidth="1" fill="none" />
+          <path d="M 25 30 L 25 20 L 35 20 M 65 20 L 75 20 L 75 30 M 75 60 L 75 70 L 65 70 M 35 70 L 25 70 L 25 60" stroke="#a78bfa" strokeWidth="1.5" fill="none" />
+        </svg>
+      )
+    },
+    {
+      id: 5,
+      name: 'Kaveesha',
+      role: 'Client App Developer (Mobile)',
+      regNo: 'IT22142528',
+      componentName: 'Component 4: Nutrient Deficiency Detection',
+      bio: 'Builds cross-platform UI features using Flutter. Connects SQLite on-device caches, optimizes local TFLite operations, and designed the leaf nutrient deficiency semantic classifier.',
+      skills: ['Flutter/Dart', 'Mobile DB Caching', 'TFLite Integration', 'Offline Inference', 'Feature Fusion', 'SHAP Explainability'],
+      socials: { github: '#', linkedin: '#', email: 'mailto:kaveesha@lununeth.ai' },
+      linkedinAvatarUrl: 'https://media.licdn.com/dms/image/v2/D5635AQEawBaMLJhMow/profile-framedphoto-shrink_400_400/profile-framedphoto-shrink_400_400/0/1734508366578?e=1782327600&v=beta&t=im2i7yNgXwkEuyzf2heJ6hqCnQQobsPqYCFsJIXVEzM', // To import LinkedIn picture, paste the direct copied address here
+      avatar: (
+        <svg viewBox="0 0 100 100" className="team-avatar-svg">
+          <rect width="100" height="100" fill="#04121b" />
+          <circle cx="50" cy="45" r="16" fill="rgba(14, 165, 233, 0.15)" stroke="#0ea5e9" strokeWidth="1.5" />
+          <path d="M 28 80 C 28 65 38 61 50 61 C 62 61 72 65 72 80 Z" fill="rgba(14, 165, 233, 0.1)" stroke="#0ea5e9" strokeWidth="1.5" />
+          <rect x="36" y="15" width="28" height="60" rx="3" stroke="rgba(14, 165, 233, 0.25)" strokeWidth="1.5" fill="none" />
+          <circle cx="50" cy="68" r="2" fill="#0ea5e9" opacity="0.5" />
         </svg>
       )
     }

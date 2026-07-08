@@ -75,7 +75,7 @@ Purple Blotch, caused by the fungal pathogen *Alternaria porri*, is one of the m
       id: 2,
       title: 'Thrips Pest Detection',
       regNo: 'IT22226464',
-      developer: 'Sithum Buddika',
+      developer: 'Senura Jayasinghe',
       objective: 'Small-object detection to localize and quantify Thysanoptera (Thrips) infestations in field images.',
       tech: ['YOLOv8', 'Faster R-CNN', 'Sliced Aided Hyper Inference (SAHI)', 'Focal Loss', 'TensorFlow Lite', 'Anchor Box Tuning'],
       features: [
@@ -115,7 +115,7 @@ Onion Thrips (*Thysanoptera*) are highly mobile, small insects that feed on leaf
       id: 3,
       title: 'Trilingual Chatbot & Context-Aware Diagnostics',
       regNo: 'IT22087256',
-      developer: 'Kaveesha Silva',
+      developer: 'Sithum Buddika',
       objective: 'A Spatio-Temporal Graph Neural Network (ST-GNN) that fuses text symptoms, geolocation, and temporal weather arrays to output dynamic agricultural advice in Sinhala, Singlish, or English.',
       tech: ['mBERT Embeddings', 'GraphSAGE', 'Graph Attention Networks (GAT)', 'pgmpy Bayesian Belief Networks', 'OpenWeatherMap API', 'mT5 / mBART'],
       features: [
@@ -155,7 +155,7 @@ Agricultural diagnostic models often evaluate images in isolation, ignoring crit
       id: 4,
       title: 'Nutrient Deficiency Detection',
       regNo: 'IT22142528',
-      developer: 'Senura Jayasinghe',
+      developer: 'Kaveesha Silva',
       objective: 'Image-based classification and regression model to identify Nitrogen, Phosphorus, Potassium, Magnesium, and Calcium deficiencies.',
       tech: ['MobileNetV3', 'Engineered Color Index (RGB/HSV)', 'Engineered Texture Index (GLCM)', 'SHAP Explainability', 'Grad-CAM', 'TFLite Quantization'],
       features: [
