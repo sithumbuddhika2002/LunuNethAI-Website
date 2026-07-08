@@ -27,6 +27,7 @@ import DownloadSection from './components/DownloadSection';
 import ResearchGallery from './components/ResearchGallery';
 import TeamSection from './components/TeamSection';
 import ProjectOverview from './components/ProjectOverview';
+import AdminDashboard from './components/AdminDashboard';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -55,7 +56,7 @@ declare module 'react' {
 }
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<'home' | 'overview' | 'simulators' | 'gallery' | 'beta'>('home');
+  const [currentPage, setCurrentPage] = useState<'home' | 'overview' | 'simulators' | 'gallery' | 'beta' | 'admin'>('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
@@ -92,6 +93,37 @@ export default function App() {
     };
   }, []);
 
+  // Handle URL changes & popstate routing dynamically (e.g. visiting /admin directly)
+  useEffect(() => {
+    const handleUrlRouting = () => {
+      const path = window.location.pathname;
+      const hash = window.location.hash;
+      const search = window.location.search;
+
+      if (path === '/admin' || hash === '#admin' || hash === '#/admin' || search.includes('admin')) {
+        setCurrentPage('admin');
+      } else if (path === '/overview' || hash === '#overview' || hash === '#/overview' || search.includes('overview')) {
+        setCurrentPage('overview');
+      } else if (path === '/simulators' || hash === '#simulators' || hash === '#/simulators' || search.includes('simulators')) {
+        setCurrentPage('simulators');
+      } else if (path === '/gallery' || hash === '#gallery' || hash === '#/gallery' || search.includes('gallery')) {
+        setCurrentPage('gallery');
+      } else if (path === '/beta' || hash === '#beta' || hash === '#/beta' || search.includes('beta')) {
+        setCurrentPage('beta');
+      } else {
+        setCurrentPage('home');
+      }
+    };
+
+    handleUrlRouting();
+    window.addEventListener('hashchange', handleUrlRouting);
+    window.addEventListener('popstate', handleUrlRouting);
+    return () => {
+      window.removeEventListener('hashchange', handleUrlRouting);
+      window.removeEventListener('popstate', handleUrlRouting);
+    };
+  }, []);
+
   // Handle pending scroll targets when transitioning back to the homepage
   useEffect(() => {
     if (currentPage === 'home' && pendingHashRef.current) {
@@ -111,9 +143,13 @@ export default function App() {
   }, [currentPage]);
 
   // Router-like function
-  const navigateTo = (page: 'home' | 'overview' | 'simulators' | 'gallery' | 'beta', hash?: string) => {
+  const navigateTo = (page: 'home' | 'overview' | 'simulators' | 'gallery' | 'beta' | 'admin', hash?: string) => {
     setCurrentPage(page);
     setMobileMenuOpen(false);
+
+    // Update URL history pathname dynamically (pushState)
+    const newPath = page === 'home' ? '/' : `/${page}`;
+    window.history.pushState({}, '', newPath);
     
     // Set click navigating to true to disable scroll-spy temporarily during transition
     isClickNavigating.current = true;
@@ -1095,6 +1131,15 @@ export default function App() {
               <p>Explore visual maps, drone surveys, microscopy data, and model validation runs compiled during our research cycles.</p>
             </div>
             <ResearchGallery />
+          </div>
+        </section>
+      )}
+
+      {/* Admin Dashboard Section */}
+      {currentPage === 'admin' && (
+        <section id="admin" className="section" style={{ paddingTop: '8rem', borderTop: '1px solid var(--border-glass)', background: 'rgba(5, 15, 10, 0.1)' }}>
+          <div className="container">
+            <AdminDashboard />
           </div>
         </section>
       )}
