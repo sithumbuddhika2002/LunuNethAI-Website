@@ -207,36 +207,33 @@ Nutrient deficiencies represent a silent yield killer, often manifesting as subt
         <div className="hero-tag" style={{ margin: '0 auto 1rem auto' }}>
           <span></span> Precision Agriculture Framework
         </div>
-        <h1 style={{ fontSize: '3rem', fontWeight: 800, textAlign: 'center', margin: '1rem 0' }}>
+        <h1 style={{ fontSize: 'clamp(1.75rem, 6vw, 3rem)', fontWeight: 800, textAlign: 'center', margin: '1rem 0', lineHeight: 1.2 }}>
           🌱 LunuNeth AI <span className="gradient-text">Project Overview</span>
         </h1>
-        <p style={{ maxWidth: '750px', margin: '0 auto', fontSize: '1.05rem', color: 'var(--text-secondary)' }}>
+        <p style={{ maxWidth: '750px', margin: '0 auto', fontSize: 'clamp(0.9rem, 3.5vw, 1.05rem)', color: 'var(--text-secondary)' }}>
           An integrated, mobile-first AI diagnostic framework specifically built for Sri Lankan onion farmers. 
           Unifying four distinct intelligent sub-systems covering NLP, Computer Vision, and Spatio-Temporal Graph Inference.
         </p>
       </div>
 
       {/* Tab controls */}
-      <div className="flex-center" style={{ marginBottom: '3.5rem' }}>
-        <div style={{ display: 'flex', background: 'rgba(15, 34, 25, 0.45)', padding: '0.4rem', borderRadius: '30px', border: '1px solid var(--border-glass)' }}>
+      <div className="flex-center" style={{ marginBottom: '3.5rem', width: '100%' }}>
+        <div className="overview-tabs-container">
           <button 
             onClick={() => setActiveTab('components')}
             className={`filter-pill ${activeTab === 'components' ? 'active' : ''}`}
-            style={{ borderRadius: '25px', padding: '0.6rem 1.8rem', fontSize: '0.85rem' }}
           >
             <Layers className="w-4 h-4 inline-block mr-2" /> Core Components
           </button>
           <button 
             onClick={() => setActiveTab('tech')}
             className={`filter-pill ${activeTab === 'tech' ? 'active' : ''}`}
-            style={{ borderRadius: '25px', padding: '0.6rem 1.8rem', fontSize: '0.85rem' }}
           >
             <Cpu className="w-4 h-4 inline-block mr-2" /> Tech Stack Fusions
           </button>
           <button 
             onClick={() => setActiveTab('impact')}
             className={`filter-pill ${activeTab === 'impact' ? 'active' : ''}`}
-            style={{ borderRadius: '25px', padding: '0.6rem 1.8rem', fontSize: '0.85rem' }}
           >
             <TrendingUp className="w-4 h-4 inline-block mr-2" /> Impact & Commercialization
           </button>
@@ -251,9 +248,9 @@ Nutrient deficiencies represent a silent yield killer, often manifesting as subt
             <p style={{ maxWidth: '100%', margin: '0.5rem 0 0 0' }}>Click "Read Research Proposal" to examine the comprehensive theoretical formulations and annotations guidelines for each module.</p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
+          <div className="project-components-grid">
             {components.map((comp) => (
-              <div key={comp.id} className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', height: '100%', borderColor: 'rgba(16, 185, 129, 0.15)', transition: 'transform 0.3s ease' }}>
+              <div key={comp.id} className="glass-card project-comp-card" style={{ display: 'flex', flexDirection: 'column', height: '100%', borderColor: 'rgba(16, 185, 129, 0.15)', transition: 'transform 0.3s ease' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
                   <span style={{ fontSize: '0.75rem', fontFamily: 'monospace', color: 'var(--accent-secondary)', background: 'rgba(0, 255, 135, 0.08)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontWeight: 'bold' }}>
                     {comp.regNo}
@@ -301,8 +298,8 @@ Nutrient deficiencies represent a silent yield killer, often manifesting as subt
 
       {/* TAB CONTENT: TECH STACK */}
       {activeTab === 'tech' && (
-        <div className="glass-card" style={{ padding: '3rem', borderColor: 'rgba(16, 185, 129, 0.1)' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '3rem' }}>
+        <div className="glass-card project-tech-wrapper-card" style={{ borderColor: 'rgba(16, 185, 129, 0.1)' }}>
+          <div className="project-tech-grid">
             
             {/* Tech Column 1 */}
             <div>
@@ -380,9 +377,9 @@ Nutrient deficiencies represent a silent yield killer, often manifesting as subt
 
       {/* TAB CONTENT: IMPACT */}
       {activeTab === 'impact' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
+        <div className="project-impact-grid">
           
-          <div className="glass-card" style={{ padding: '2.5rem', borderColor: 'rgba(16, 185, 129, 0.1)' }}>
+          <div className="glass-card project-impact-card" style={{ borderColor: 'rgba(16, 185, 129, 0.1)' }}>
             <h4 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--accent-secondary)' }}>📉 Agronomic Yield Crisis</h4>
             <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
               Sri Lanka imports approximately <strong>200,000 metric tons of onions annually</strong> due to severe local production gaps. 
@@ -390,7 +387,7 @@ Nutrient deficiencies represent a silent yield killer, often manifesting as subt
             </p>
           </div>
 
-          <div className="glass-card" style={{ padding: '2.5rem', borderColor: 'rgba(16, 185, 129, 0.1)' }}>
+          <div className="glass-card project-impact-card" style={{ borderColor: 'rgba(16, 185, 129, 0.1)' }}>
             <h4 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--accent-secondary)' }}>📶 Offline Edge Independence</h4>
             <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
               Most rural agricultural zones suffer from unstable internet connectivity. 
@@ -399,7 +396,7 @@ Nutrient deficiencies represent a silent yield killer, often manifesting as subt
             </p>
           </div>
 
-          <div className="glass-card" style={{ padding: '2.5rem', borderColor: 'rgba(16, 185, 129, 0.1)' }}>
+          <div className="glass-card project-impact-card" style={{ borderColor: 'rgba(16, 185, 129, 0.1)' }}>
             <h4 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--accent-secondary)' }}>💬 Code-Switched Chatbot Advisory</h4>
             <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
               Instead of forcing farmers to interact in formal English or Sinhala text, the chatbot fine-tunes mBERT to support 
@@ -412,9 +409,9 @@ Nutrient deficiencies represent a silent yield killer, often manifesting as subt
       )}
 
       {/* Getting Started Terminal Block */}
-      <div className="glass-card" style={{ padding: '2.5rem', marginTop: '3.5rem', border: '1px dashed var(--accent-glow-strong)' }}>
+      <div className="glass-card project-setup-card" style={{ marginTop: '3.5rem', border: '1px dashed var(--accent-glow-strong)' }}>
         <h4 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.25rem' }}>🚀 Quick Setup & Local Execution</h4>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
+        <div className="project-setup-grid">
           <div>
             <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Python Backend APIs</div>
             <pre style={{ background: '#090d16', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-glass)', fontSize: '0.75rem', fontFamily: 'monospace', color: '#10b981', overflowX: 'auto' }}>
@@ -459,18 +456,18 @@ flutter run`}
             <div className="modal-body-scrollable" style={{ padding: '2rem 0' }}>
               
               {/* Proposal Document Body */}
-              <div className="proposal-md-body" style={{ background: 'rgba(0,0,0,0.2)', padding: '2rem', borderRadius: '8px', border: '1px solid var(--border-glass)', minHeight: '300px' }}>
+              <div className="proposal-md-body" style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '8px', border: '1px solid var(--border-glass)', minHeight: '300px' }}>
                 <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'var(--font-sans)', fontSize: '0.9rem', lineHeight: '1.6', color: 'var(--text-primary)' }}>
                   {selectedProposal.proposalContent}
                 </pre>
               </div>
 
               {/* Actions panel */}
-              <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', justifyContent: 'flex-end' }}>
+              <div className="modal-actions-row">
                 <button 
                   onClick={() => handleCopyPath(selectedProposal.proposalFile)}
                   className="outline-btn"
-                  style={{ gap: '0.5rem', fontSize: '0.8rem', padding: '0.6rem 1.2rem' }}
+                  style={{ gap: '0.5rem', fontSize: '0.8rem' }}
                 >
                   <Copy size={13} /> {copySuccess ? 'Copied Path!' : 'Copy Local Path'}
                 </button>
@@ -485,7 +482,7 @@ flutter run`}
                     URL.revokeObjectURL(url);
                   }}
                   className="solid-btn"
-                  style={{ gap: '0.5rem', fontSize: '0.8rem', padding: '0.6rem 1.2rem' }}
+                  style={{ gap: '0.5rem', fontSize: '0.8rem' }}
                 >
                   <Download size={13} /> Download Markdown (.md)
                 </button>

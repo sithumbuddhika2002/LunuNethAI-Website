@@ -1154,20 +1154,20 @@ export default function App() {
             </div>
 
             {/* Architecture visual grid/flow */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem', maxWidth: '900px', margin: '0 auto' }}>
-              <div className="glass-card" style={{ padding: '2rem 1.5rem' }}>
+            <div className="architecture-grid">
+              <div className="glass-card architecture-card">
                 <div style={{ fontSize: '2.5rem', marginBottom: '1rem', color: '#10b981' }}><Globe className="w-10 h-10 mx-auto" /></div>
                 <h4 style={{ marginBottom: '0.5rem' }}>Flutter Client App</h4>
                 <p style={{ fontSize: '0.85rem' }}>Cross-platform UI (iOS/Android), offline sqlite caching, camera scan interfaces, and light TFLite classification.</p>
               </div>
               
-              <div className="glass-card" style={{ padding: '2rem 1.5rem', borderColor: 'rgba(16, 185, 129, 0.4)', boxShadow: '0 0 20px var(--accent-glow)' }}>
+              <div className="glass-card architecture-card" style={{ borderColor: 'rgba(16, 185, 129, 0.4)', boxShadow: '0 0 20px var(--accent-glow)' }}>
                 <div style={{ fontSize: '2.5rem', marginBottom: '1rem', color: '#00ff87' }}><GitMerge className="w-10 h-10 mx-auto" /></div>
                 <h4 style={{ marginBottom: '0.5rem' }}>FastAPI Router Server</h4>
                 <p style={{ fontSize: '0.85rem' }}>Docker container hosting on Hugging Face Spaces. Multi-agent coordination, database clustering, and async processing.</p>
               </div>
 
-              <div className="glass-card" style={{ padding: '2rem 1.5rem' }}>
+              <div className="glass-card architecture-card">
                 <div style={{ fontSize: '2.5rem', marginBottom: '1rem', color: '#a78bfa' }}><Bot className="w-10 h-10 mx-auto" /></div>
                 <h4 style={{ marginBottom: '0.5rem' }}>DL Inference Pipelines</h4>
                 <p style={{ fontSize: '0.85rem' }}>PyTorch object detectors, EfficientNet Grad-CAM, BERT classification engines, and ST-GNN crop spread forecasting.</p>
