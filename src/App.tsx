@@ -28,6 +28,7 @@ import ResearchGallery from './components/ResearchGallery';
 import TeamSection from './components/TeamSection';
 import ProjectOverview from './components/ProjectOverview';
 import AdminDashboard from './components/AdminDashboard';
+import AndroidInstallPopup from './components/AndroidInstallPopup';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -1376,6 +1377,9 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Auto Android Install Prompt Modal */}
+      <AndroidInstallPopup />
     </div>
   );
 }
