@@ -1,4 +1,4 @@
-import { Mail, GraduationCap, Code, Server, Network } from 'lucide-react';
+import { Mail, GraduationCap, Server } from 'lucide-react';
 
 interface TeamMember {
   id: number;
@@ -32,11 +32,11 @@ const LinkedinIcon = () => (
 export default function TeamSection() {
   const supervisor: TeamMember = {
     id: 1,
-    name: 'Dr. Kaushalya Dissanayaka',
-    role: 'Project Supervisor & Academic Lead',
-    bio: 'Senior academic and AI supervisor. Leads research methodologies, dataset validations, and oversees scientific accuracy of model predictions.',
-    skills: ['AI Research', 'Pattern Recognition', 'Data Science', 'Academic Oversight'],
-    socials: { linkedin: '#', email: 'mailto:kaushalya@lununeth.ai' },
+    name: 'Dr. Kaushalya Dissanayake',
+    role: 'Project Supervisor',
+    bio: 'Senior Lecturer in the Department of Information Technology at SLIIT. Holds a Ph.D. in Computer Science from Management & Science University, Malaysia. Expert in Cyber Security, Machine Learning, Deep Learning, Image Processing, and Natural Language Processing.',
+    skills: ['Cyber Security', 'Machine Learning', 'Deep Learning', 'Image Processing', 'Data Science'],
+    socials: { linkedin: '#', email: 'mailto:kaushalya.d@sliit.lk' },
     linkedinAvatarUrl: 'https://media.licdn.com/dms/image/v2/D5603AQHC9gi1G7K6Tw/profile-displayphoto-scale_400_400/B56Z4Sfi0iJkAg-/0/1778426723235?e=1783555200&v=beta&t=PpzibfPLCC0_WJWY9ia26gauRxsKHhxlYf_hLzlMv5Q', // To import LinkedIn picture, paste the direct copied address here
     avatar: (
       <svg viewBox="0 0 100 100" className="team-avatar-svg">
@@ -52,13 +52,38 @@ export default function TeamSection() {
     )
   };
 
+  const coSupervisor: TeamMember = {
+    id: 6,
+    name: 'Dr. Dharshana Kasthurirathna',
+    role: 'Project Co-Supervisor',
+    bio: 'Assistant Professor in Software Engineering at SLIIT. Holds a Ph.D. in Complex Systems from the University of Sydney. Expert in network science, complex computational systems modeling, evolutionary game theory, and machine learning.',
+    skills: ['Complex Systems', 'Network Science', 'Machine Learning', 'Software Architecture', 'Distributed Systems'],
+    socials: { linkedin: 'https://www.linkedin.com/in/dharshana-kasthurirathna-a4a3275/', email: 'mailto:dharshana.k@sliit.lk' },
+    linkedinAvatarUrl: 'https://media.licdn.com/dms/image/v2/D5603AQH--2a6YBP_jg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1729917817644?e=1785369600&v=beta&t=CNn-KtdutKJoixxsQ-f84wZjFPyvEN6iMi5eAfRpoQw',
+    avatar: (
+      <svg viewBox="0 0 100 100" className="team-avatar-svg">
+        <rect width="100" height="100" fill="#081e22" />
+        <circle cx="50" cy="42" r="18" fill="rgba(14, 165, 233, 0.2)" stroke="#0ea5e9" strokeWidth="1.5" />
+        <path d="M 25 80 C 25 62 38 58 50 58 C 62 58 75 62 75 80 Z" fill="rgba(14, 165, 233, 0.15)" stroke="#0ea5e9" strokeWidth="1.5" />
+        <path d="M 50 15 L 72 23 L 50 31 L 28 23 Z" fill="#0ea5e9" />
+        <path d="M 72 23 L 72 35" stroke="#0ea5e9" strokeWidth="1.5" />
+        <path d="M 50 31 L 50 38" stroke="#0ea5e9" strokeWidth="1.5" />
+        <circle cx="50" cy="42" r="2" fill="#38bdf8" />
+        <circle cx="80" cy="20" r="3" fill="#38bdf8" />
+        <circle cx="20" cy="30" r="3" fill="#38bdf8" />
+        <line x1="50" y1="42" x2="80" y2="20" stroke="rgba(56, 189, 248, 0.3)" strokeWidth="1" />
+        <line x1="50" y1="42" x2="20" y2="30" stroke="rgba(56, 189, 248, 0.3)" strokeWidth="1" />
+      </svg>
+    )
+  };
+
   const members: TeamMember[] = [
     {
       id: 2,
       name: 'Vidura',
       role: 'Team Leader',
       regNo: 'IT22054890',
-      componentName: 'Component 1: Purple Blotch Disease Detection',
+      componentName: 'Purple Blotch Disease Detection',
       bio: 'Directs development sprints, microservice container assemblies, and designs the FastAPI consolidated agent controller routing. Lead researcher on Purple Blotch detection and severity classification.',
       skills: ['Systems Architecture', 'Docker Dev', 'FastAPI Routing', 'MongoDB Integration', 'TinyML Quantization', 'CNNs & ViTs'],
       socials: { github: '#', linkedin: '#', email: 'mailto:vidura@lununeth.ai' },
@@ -79,7 +104,7 @@ export default function TeamSection() {
       name: 'Sithum',
       role: 'Predictive Systems Developer',
       regNo: 'IT22087256',
-      componentName: 'Component 3: Trilingual Chatbot & Context-Aware Diagnostics',
+      componentName: 'Trilingual Chatbot & Context-Aware Diagnostics',
       bio: 'Architect of the Spatio-Temporal Graph Neural Network. Programs multi-agent forecast probabilities, MongoDB connections, and the trilingual chatbot conversational routing.',
       skills: ['GNN Modeling', 'Spatio-Temporal GNN', 'Database Clustering', 'Bayesian Networks', 'mBERT & Seq2Seq', 'NLP Diagnostics'],
       socials: { github: '#', linkedin: '#', email: 'mailto:sithum@lununeth.ai' },
@@ -103,7 +128,7 @@ export default function TeamSection() {
       name: 'Senura',
       role: 'Deep Learning Developer (Vision)',
       regNo: 'IT22226464',
-      componentName: 'Component 2: Thrips Pest Detection',
+      componentName: 'Thrips Pest Detection',
       bio: 'Responsible for PyTorch object detection networks. Trained and validated Faster R-CNN on crop-thrips coordinates, using Sliced Aided Hyper Inference (SAHI) for small pest localization.',
       skills: ['PyTorch DL', 'Object Localization', 'EfficientNet CAM', 'Model Optimization', 'YOLOv8 & SAHI', 'IPM Scaling'],
       socials: { github: '#', linkedin: '#', email: 'mailto:senura@lununeth.ai' },
@@ -123,11 +148,11 @@ export default function TeamSection() {
       name: 'Kaveesha',
       role: 'Client App Developer (Mobile)',
       regNo: 'IT22142528',
-      componentName: 'Component 4: Nutrient Deficiency Detection',
+      componentName: 'Nutrient Deficiency Detection',
       bio: 'Builds cross-platform UI features using Flutter. Connects SQLite on-device caches, optimizes local TFLite operations, and designed the leaf nutrient deficiency semantic classifier.',
       skills: ['Flutter/Dart', 'Mobile DB Caching', 'TFLite Integration', 'Offline Inference', 'Feature Fusion', 'SHAP Explainability'],
       socials: { github: '#', linkedin: '#', email: 'mailto:kaveesha@lununeth.ai' },
-      linkedinAvatarUrl: 'https://media.licdn.com/dms/image/v2/D5635AQEawBaMLJhMow/profile-framedphoto-shrink_400_400/profile-framedphoto-shrink_400_400/0/1734508366578?e=1782327600&v=beta&t=im2i7yNgXwkEuyzf2heJ6hqCnQQobsPqYCFsJIXVEzM', // To import LinkedIn picture, paste the direct copied address here
+      linkedinAvatarUrl: 'https://media.licdn.com/dms/image/v2/D5635AQEawBaMLJhMow/profile-framedphoto-shrink_800_800/profile-framedphoto-shrink_800_800/0/1734508366578?e=1784098800&v=beta&t=z4D2nXFM9_08CSpQMSLp8vXsWud-7kYe1QveOtyWJwI', // To import LinkedIn picture, paste the direct copied address here
       avatar: (
         <svg viewBox="0 0 100 100" className="team-avatar-svg">
           <rect width="100" height="100" fill="#04121b" />
@@ -177,7 +202,7 @@ export default function TeamSection() {
 
   return (
     <div className="team-layout-wrapper">
-      {/* 1. Supervisor Placement (Centered Hero Card) */}
+      {/* 1. Supervisor & Co-Supervisor Placement (Centered Hero Cards) */}
       <div className="supervisor-container">
         <div className="glass-card team-card supervisor-card">
           <AvatarImage member={supervisor} fallbackId="fallback-supervisor" />
@@ -209,6 +234,37 @@ export default function TeamSection() {
             )}
           </div>
         </div>
+
+        <div className="glass-card team-card supervisor-card" style={{ borderColor: 'rgba(14, 165, 233, 0.25)', boxShadow: '0 0 20px rgba(14, 165, 233, 0.05)' }}>
+          <AvatarImage member={coSupervisor} fallbackId="fallback-cosupervisor" />
+          
+          <h3>{coSupervisor.name}</h3>
+          <div className="team-role" style={{ color: '#0ea5e9', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Server className="w-4 h-4" /> {coSupervisor.role}
+          </div>
+          <p style={{ fontSize: '0.85rem', marginBottom: '1.25rem', color: 'var(--text-secondary)' }}>
+            {coSupervisor.bio}
+          </p>
+          <div className="team-skills-tags">
+            {coSupervisor.skills.map((skill, index) => (
+              <span key={index} className="skill-tag" style={{ borderColor: 'rgba(14, 165, 233, 0.2)', background: 'rgba(14, 165, 233, 0.03)' }}>
+                {skill}
+              </span>
+            ))}
+          </div>
+          <div className="team-social-links">
+            {coSupervisor.socials.linkedin && (
+              <a href={coSupervisor.socials.linkedin} target="_blank" rel="noopener noreferrer">
+                <LinkedinIcon />
+              </a>
+            )}
+            {coSupervisor.socials.email && (
+              <a href={coSupervisor.socials.email}>
+                <Mail className="w-4 h-4" />
+              </a>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* 2. Grid for Core Team Members */}
@@ -220,14 +276,10 @@ export default function TeamSection() {
           <h3>{members[0].name}</h3>
           
           {members[0].regNo && (
-            <div style={{ fontSize: '0.75rem', color: 'var(--accent-secondary)', fontFamily: 'monospace', fontWeight: 'bold', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--accent-secondary)', fontFamily: 'monospace', fontWeight: 'bold', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
               {members[0].regNo}
             </div>
           )}
-          
-          <div className="team-role" style={{ color: 'var(--accent-secondary)', display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
-            <Network className="w-4 h-4" /> {members[0].role}
-          </div>
 
           {members[0].componentName && (
             <div style={{ fontSize: '0.75rem', color: 'var(--text-primary)', opacity: 0.9, fontWeight: 500, marginBottom: '0.75rem', lineHeight: '1.2', borderLeft: '2px solid var(--accent-secondary)', paddingLeft: '0.4rem' }}>
@@ -272,14 +324,10 @@ export default function TeamSection() {
             <h3>{member.name}</h3>
 
             {member.regNo && (
-              <div style={{ fontSize: '0.75rem', color: 'var(--accent-secondary)', fontFamily: 'monospace', fontWeight: 'bold', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--accent-secondary)', fontFamily: 'monospace', fontWeight: 'bold', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
                 {member.regNo}
               </div>
             )}
-
-            <div className="team-role" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
-              <Code className="w-4 h-4" /> {member.role}
-            </div>
 
             {member.componentName && (
               <div style={{ fontSize: '0.75rem', color: 'var(--text-primary)', opacity: 0.9, fontWeight: 500, marginBottom: '0.75rem', lineHeight: '1.2', borderLeft: '2px solid var(--accent-primary)', paddingLeft: '0.4rem' }}>

@@ -1827,6 +1827,8 @@ a {
 .supervisor-container {
   display: flex;
   justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
 }
 
 .members-grid {
@@ -1939,12 +1941,36 @@ a {
 @media (max-width: 1024px) {
   .members-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  .team-layout-wrapper {
+    gap: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .team-card {
+    padding: 1.75rem 1.25rem;
+  }
+  .team-skills-tags {
+    margin-bottom: 1.25rem;
+  }
+  .team-card h3 {
+    font-size: 1.15rem;
+  }
+  .skill-tag {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.4rem;
   }
 }
 
 @media (max-width: 580px) {
   .members-grid {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .team-layout-wrapper {
+    gap: 2rem;
   }
 }
 
