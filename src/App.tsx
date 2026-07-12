@@ -29,6 +29,7 @@ import TeamSection from './components/TeamSection';
 import ProjectOverview from './components/ProjectOverview';
 import AdminDashboard from './components/AdminDashboard';
 import AndroidInstallPopup from './components/AndroidInstallPopup';
+import WindowsInstallPopup from './components/WindowsInstallPopup';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -1380,6 +1381,9 @@ export default function App() {
 
       {/* Auto Android Install Prompt Modal */}
       <AndroidInstallPopup />
+
+      {/* Auto Windows Install Prompt Modal */}
+      <WindowsInstallPopup />
     </div>
   );
 }
