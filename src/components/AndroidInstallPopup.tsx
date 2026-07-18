@@ -84,7 +84,7 @@ export default function AndroidInstallPopup() {
         {/* Call to Actions */}
         <div className="install-popup-actions">
           <a
-            href="downloads/android/lunuNeth%20AI%201.0.apk"
+            href="/downloads/android/lunuNeth%20AI%201.0.apk"
             className="gradient-btn install-popup-btn-primary"
             onClick={handleInstallClick}
             download="lunuNeth AI 1.0.apk"
