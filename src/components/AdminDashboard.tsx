@@ -17,7 +17,10 @@ import {
   SlidersHorizontal,
   X,
   PlusCircle,
-  Database
+  Database,
+  UploadCloud,
+  Smartphone,
+  Monitor
 } from 'lucide-react';
 import { 
   getLogs, 
@@ -86,7 +89,7 @@ export default function AdminDashboard() {
   const [authError, setAuthError] = useState('');
 
   // Dashboard navigation state
-  const [activeTab, setActiveTab] = useState<'overview' | CategoryType>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'releases' | CategoryType>('overview');
 
   // Logs state
   const [logs, setLogs] = useState<GalleryItem[]>([]);
@@ -173,6 +176,47 @@ export default function AdminDashboard() {
     setTimeout(() => {
       setToastVisible(false);
     }, 3000);
+  };
+
+  // Handle release file upload
+  const [uploadingRelease, setUploadingRelease] = useState<'android' | 'windows' | null>(null);
+  const handleReleaseUpload = async (platform: 'android' | 'windows', file: File | undefined) => {
+    if (!file) return;
+    
+    // Basic validation
+    if (platform === 'android' && !file.name.endsWith('.apk')) {
+      triggerToast('Invalid file format. Please upload an .apk file for Android.');
+      return;
+    }
+    if (platform === 'windows' && !file.name.endsWith('.exe')) {
+      triggerToast('Invalid file format. Please upload an .exe file for Windows.');
+      return;
+    }
+
+    setUploadingRelease(platform);
+    triggerToast(`Uploading ${platform} release...`);
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('platform', platform);
+
+    try {
+      const response = await fetch('/upload_release.php', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      const result = await response.json();
+      if (result.status === 'success') {
+        triggerToast(`${platform.charAt(0).toUpperCase() + platform.slice(1)} app updated successfully!`);
+      } else {
+        triggerToast(`Upload failed: ${result.message}`);
+      }
+    } catch (error) {
+      triggerToast(`Network error while uploading ${platform} release.`);
+    } finally {
+      setUploadingRelease(null);
+    }
   };
 
   // Auth handler
@@ -439,6 +483,15 @@ export default function AdminDashboard() {
               </button>
             ))}
 
+            <button 
+              onClick={() => setActiveTab('releases')} 
+              className={`admin-tab-btn ${activeTab === 'releases' ? 'active' : ''}`}
+              title="Manage App Releases"
+              style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}
+            >
+              <UploadCloud size={13} /> App Releases
+            </button>
+
             <button onClick={handleLogout} className="admin-logout-btn flex-center" style={{ marginLeft: 'auto' }}>
               <LogOut size={15} /> Logout
             </button>
@@ -540,8 +593,64 @@ export default function AdminDashboard() {
           </div>
         )}
 
+        {/* Tab: App Releases Upload */}
+        {activeTab === 'releases' && (
+          <div className="admin-releases-tab animate-fade-in" style={{ padding: '2rem' }}>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <UploadCloud size={18} className="text-emerald-400" /> Manage App Releases
+            </h3>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
+              Upload new production releases for the LunuNeth AI applications. These files will be immediately available to users via the Download Section. (Note: Requires PHP backend via /upload_release.php)
+            </p>
+
+            <div className="admin-stats-grid">
+              {/* Android Release Card */}
+              <div className="glass-card stat-item-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '2rem' }}>
+                <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '1rem', borderRadius: '50%', color: '#10b981', marginBottom: '1rem' }}>
+                  <Smartphone size={32} />
+                </div>
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Android App (APK)</h4>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
+                  Upload the latest Android .apk bundle. It will be renamed correctly.
+                </p>
+                <label className="gradient-btn" style={{ cursor: 'pointer', width: '100%', justifyContent: 'center' }}>
+                  {uploadingRelease === 'android' ? 'Uploading...' : 'Upload Android APK'}
+                  <input 
+                    type="file" 
+                    accept=".apk" 
+                    style={{ display: 'none' }}
+                    disabled={uploadingRelease !== null}
+                    onChange={(e) => handleReleaseUpload('android', e.target.files?.[0])}
+                  />
+                </label>
+              </div>
+
+              {/* Windows Release Card */}
+              <div className="glass-card stat-item-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '2rem' }}>
+                <div style={{ background: 'rgba(0, 164, 239, 0.1)', padding: '1rem', borderRadius: '50%', color: '#00a4ef', marginBottom: '1rem' }}>
+                  <Monitor size={32} />
+                </div>
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Windows Setup (EXE)</h4>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
+                  Upload the latest Windows .exe installer. Make sure it is compiled.
+                </p>
+                <label className="gradient-btn" style={{ cursor: 'pointer', width: '100%', justifyContent: 'center', background: 'linear-gradient(90deg, #0078d7, #00a4ef)' }}>
+                  {uploadingRelease === 'windows' ? 'Uploading...' : 'Upload Windows EXE'}
+                  <input 
+                    type="file" 
+                    accept=".exe" 
+                    style={{ display: 'none' }}
+                    disabled={uploadingRelease !== null}
+                    onChange={(e) => handleReleaseUpload('windows', e.target.files?.[0])}
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Tab 2: Manage Logs Table CRUD */}
-        {activeTab !== 'overview' && (
+        {activeTab !== 'overview' && activeTab !== 'releases' && (
           <div className="admin-manage-tab animate-fade-in">
             {/* Search and Action Bar */}
             <div className="admin-search-actions-bar">
@@ -642,6 +751,14 @@ export default function AdminDashboard() {
           </div>
         )}
       </div>
+
+        {/* Toast Feedback */}
+      {toastVisible && toastMessage && (
+        <div className="admin-toast-alert animate-fade-in">
+          <CheckCircle size={16} />
+          {toastMessage}
+        </div>
+      )}
 
       {/* Insert / Edit Form Modal */}
       {isModalOpen && createPortal(
