@@ -180,7 +180,9 @@ export default function AdminDashboard() {
 
   // Handle release file upload
   const [uploadingRelease, setUploadingRelease] = useState<'android' | 'windows' | null>(null);
-  const handleReleaseUpload = async (platform: 'android' | 'windows', file: File | undefined) => {
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  
+  const handleReleaseUpload = (platform: 'android' | 'windows', file: File | undefined) => {
     if (!file) return;
     
     // Basic validation
@@ -194,29 +196,47 @@ export default function AdminDashboard() {
     }
 
     setUploadingRelease(platform);
+    setUploadProgress(0);
     triggerToast(`Uploading ${platform} release...`);
 
     const formData = new FormData();
     formData.append('file', file);
     formData.append('platform', platform);
 
-    try {
-      const response = await fetch('/upload_release.php', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      const result = await response.json();
-      if (result.status === 'success') {
-        triggerToast(`${platform.charAt(0).toUpperCase() + platform.slice(1)} app updated successfully!`);
-      } else {
-        triggerToast(`Upload failed: ${result.message}`);
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/upload_release.php', true);
+    
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percentComplete = Math.round((event.loaded / event.total) * 100);
+        setUploadProgress(percentComplete);
       }
-    } catch (error) {
-      triggerToast(`Network error while uploading ${platform} release.`);
-    } finally {
+    };
+
+    xhr.onload = () => {
       setUploadingRelease(null);
-    }
+      if (xhr.status === 200) {
+        try {
+          const result = JSON.parse(xhr.responseText);
+          if (result.status === 'success') {
+            triggerToast(`${platform.charAt(0).toUpperCase() + platform.slice(1)} app updated successfully!`);
+          } else {
+            triggerToast(`Upload failed: ${result.message}`);
+          }
+        } catch (e) {
+          triggerToast(`Invalid response from server.`);
+        }
+      } else {
+        triggerToast(`Server error during upload.`);
+      }
+    };
+
+    xhr.onerror = () => {
+      setUploadingRelease(null);
+      triggerToast(`Network error while uploading ${platform} release.`);
+    };
+
+    xhr.send(formData);
   };
 
   // Auth handler
@@ -605,45 +625,71 @@ export default function AdminDashboard() {
 
             <div className="admin-stats-grid">
               {/* Android Release Card */}
-              <div className="glass-card stat-item-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '2rem' }}>
-                <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '1rem', borderRadius: '50%', color: '#10b981', marginBottom: '1rem' }}>
+              <div className="glass-card stat-item-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '2rem', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '1rem', borderRadius: '50%', color: '#10b981', marginBottom: '1rem', transition: 'all 0.3s ease', transform: uploadingRelease === 'android' ? 'scale(1.1)' : 'scale(1)', animation: uploadingRelease === 'android' ? 'pulse 1.5s infinite' : 'none' }}>
                   <Smartphone size={32} />
                 </div>
                 <h4 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Android App (APK)</h4>
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
                   Upload the latest Android .apk bundle. It will be renamed correctly.
                 </p>
-                <label className="gradient-btn" style={{ cursor: 'pointer', width: '100%', justifyContent: 'center' }}>
-                  {uploadingRelease === 'android' ? 'Uploading...' : 'Upload Android APK'}
-                  <input 
-                    type="file" 
-                    accept=".apk" 
-                    style={{ display: 'none' }}
-                    disabled={uploadingRelease !== null}
-                    onChange={(e) => handleReleaseUpload('android', e.target.files?.[0])}
-                  />
-                </label>
+                
+                {uploadingRelease === 'android' ? (
+                  <div style={{ width: '100%', marginTop: 'auto' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '0.5rem', color: '#10b981' }}>
+                      <span>Uploading...</span>
+                      <span>{uploadProgress}%</span>
+                    </div>
+                    <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div style={{ width: `${uploadProgress}%`, height: '100%', background: '#10b981', transition: 'width 0.3s ease' }}></div>
+                    </div>
+                  </div>
+                ) : (
+                  <label className="gradient-btn" style={{ cursor: 'pointer', width: '100%', justifyContent: 'center' }}>
+                    Upload Android APK
+                    <input 
+                      type="file" 
+                      accept=".apk" 
+                      style={{ display: 'none' }}
+                      disabled={uploadingRelease !== null}
+                      onChange={(e) => handleReleaseUpload('android', e.target.files?.[0])}
+                    />
+                  </label>
+                )}
               </div>
 
               {/* Windows Release Card */}
-              <div className="glass-card stat-item-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '2rem' }}>
-                <div style={{ background: 'rgba(0, 164, 239, 0.1)', padding: '1rem', borderRadius: '50%', color: '#00a4ef', marginBottom: '1rem' }}>
+              <div className="glass-card stat-item-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '2rem', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ background: 'rgba(0, 164, 239, 0.1)', padding: '1rem', borderRadius: '50%', color: '#00a4ef', marginBottom: '1rem', transition: 'all 0.3s ease', transform: uploadingRelease === 'windows' ? 'scale(1.1)' : 'scale(1)', animation: uploadingRelease === 'windows' ? 'pulse 1.5s infinite' : 'none' }}>
                   <Monitor size={32} />
                 </div>
                 <h4 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Windows Setup (EXE)</h4>
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
                   Upload the latest Windows .exe installer. Make sure it is compiled.
                 </p>
-                <label className="gradient-btn" style={{ cursor: 'pointer', width: '100%', justifyContent: 'center', background: 'linear-gradient(90deg, #0078d7, #00a4ef)' }}>
-                  {uploadingRelease === 'windows' ? 'Uploading...' : 'Upload Windows EXE'}
-                  <input 
-                    type="file" 
-                    accept=".exe" 
-                    style={{ display: 'none' }}
-                    disabled={uploadingRelease !== null}
-                    onChange={(e) => handleReleaseUpload('windows', e.target.files?.[0])}
-                  />
-                </label>
+
+                {uploadingRelease === 'windows' ? (
+                  <div style={{ width: '100%', marginTop: 'auto' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '0.5rem', color: '#00a4ef' }}>
+                      <span>Uploading...</span>
+                      <span>{uploadProgress}%</span>
+                    </div>
+                    <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div style={{ width: `${uploadProgress}%`, height: '100%', background: 'linear-gradient(90deg, #0078d7, #00a4ef)', transition: 'width 0.3s ease' }}></div>
+                    </div>
+                  </div>
+                ) : (
+                  <label className="gradient-btn" style={{ cursor: 'pointer', width: '100%', justifyContent: 'center', background: 'linear-gradient(90deg, #0078d7, #00a4ef)' }}>
+                    Upload Windows EXE
+                    <input 
+                      type="file" 
+                      accept=".exe" 
+                      style={{ display: 'none' }}
+                      disabled={uploadingRelease !== null}
+                      onChange={(e) => handleReleaseUpload('windows', e.target.files?.[0])}
+                    />
+                  </label>
+                )}
               </div>
             </div>
           </div>
