@@ -1,4 +1,4 @@
-import { Smartphone, Download, ShieldCheck, Cpu, ExternalLink, QrCode } from 'lucide-react';
+import { Smartphone, Download, ShieldCheck, Cpu, ExternalLink, QrCode, Monitor } from 'lucide-react';
 
 export default function DownloadSection() {
   return (
@@ -118,6 +118,65 @@ export default function DownloadSection() {
             <li><strong>TestFlight:</strong> Click the beta link to open directly in iOS TestFlight app.</li>
             <li><strong>Direct OTA Install:</strong> Tap "Install iOS App" directly on your iOS device. After installation, navigate to <em>Settings &gt; General &gt; VPN &amp; Device Management</em> to Trust the enterprise profile.</li>
           </ul>
+        </div>
+      </div>
+
+      {/* Windows Download Card */}
+      <div className="glass-card download-card">
+        <div className="download-icon" style={{ color: '#00a4ef', filter: 'drop-shadow(0 0 12px rgba(0, 164, 239, 0.3))' }}>
+          <Monitor className="w-12 h-12" />
+        </div>
+        <h3 className="gradient-text" style={{ background: 'linear-gradient(135deg, var(--text-primary), #00a4ef)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          Windows Installation
+        </h3>
+        <p style={{ fontSize: '0.95rem', marginBottom: '1rem' }}>
+          Run directly on your Windows PC. Get full desktop performance for offline disease diagnosis.
+        </p>
+
+        <ul className="download-list">
+          <li>
+            <ShieldCheck className="w-4 h-4" /> Secure setup executable
+          </li>
+          <li>
+            <Cpu className="w-4 h-4" /> Native desktop performance
+          </li>
+          <li>
+            <Monitor className="w-4 h-4" /> Local GPU acceleration
+          </li>
+        </ul>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%' }}>
+          <a 
+            href="downloads/windows/LunuNeth_AI_Setup.exe" 
+            className="gradient-btn"
+            style={{ justifyContent: 'center', background: 'linear-gradient(90deg, #0078d7, #00a4ef)' }}
+            download
+          >
+            <Download className="w-4 h-4" /> Download Windows App
+          </a>
+          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textAlign: 'center' }}>
+            Supports Windows 10/11. Size: ~120 MB
+          </div>
+        </div>
+
+        {/* Small Windows instructions box */}
+        <div style={{ 
+          marginTop: '1.5rem', 
+          background: 'rgba(255, 255, 255, 0.03)', 
+          border: '1px dashed var(--border-glass)', 
+          padding: '1rem', 
+          borderRadius: '10px',
+          textAlign: 'left',
+          fontSize: '0.8rem',
+          color: 'var(--text-secondary)'
+        }}>
+          <strong>How to install:</strong>
+          <ol style={{ marginLeft: '1.25rem', marginTop: '0.25rem', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+            <li>Download the <code>.exe</code> file onto your PC.</li>
+            <li>Double-click the installer.</li>
+            <li>If prompted by Windows SmartScreen, click <strong>More info</strong> and <strong>Run anyway</strong>.</li>
+            <li>Follow the setup wizard to complete installation.</li>
+          </ol>
         </div>
       </div>
     </div>
