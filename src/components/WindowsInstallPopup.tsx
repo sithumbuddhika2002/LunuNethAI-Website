@@ -80,7 +80,7 @@ export default function WindowsInstallPopup() {
         {/* Call to Actions */}
         <div className="install-popup-actions">
           <a
-            href="downloads/windows/LunuNeth_AI_Setup.exe"
+            href="https://github.com/sithumbuddhika2002/LunuNethAI-Website/releases/download/v1.0.0/LunuNeth_AI_Setup.exe"
             className="gradient-btn install-popup-btn-primary"
             onClick={handleInstallClick}
             download="LunuNeth_AI_Setup.exe"

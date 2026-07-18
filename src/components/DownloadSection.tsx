@@ -147,7 +147,7 @@ export default function DownloadSection() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%' }}>
           <a 
-            href="downloads/windows/LunuNeth_AI_Setup.exe" 
+            href="https://github.com/sithumbuddhika2002/LunuNethAI-Website/releases/download/v1.0.0/LunuNeth_AI_Setup.exe" 
             className="gradient-btn"
             style={{ justifyContent: 'center', background: 'linear-gradient(90deg, #0078d7, #00a4ef)' }}
             download
