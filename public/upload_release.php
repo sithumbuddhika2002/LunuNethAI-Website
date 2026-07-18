@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Define exact target names as expected by the frontend
     $target_name = "";
     if ($platform === 'android') {
-        $target_name = "lunuNeth AI 1.0.apk";
+        $target_name = "LunuNeth_AI.apk";
     } else {
         $target_name = "LunuNeth_AI_Setup.exe";
     }

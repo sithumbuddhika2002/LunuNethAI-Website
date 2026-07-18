@@ -27,7 +27,7 @@ export default function DownloadSection() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%' }}>
           <a 
-            href="/downloads/android/lunuNeth%20AI%201.0.apk" 
+            href="/downloads/android/LunuNeth_AI.apk" 
             className="gradient-btn"
             style={{ justifyContent: 'center' }}
             download

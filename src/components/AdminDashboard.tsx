@@ -631,7 +631,7 @@ export default function AdminDashboard() {
                 </div>
                 <h4 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Android App (APK)</h4>
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-                  Upload the latest Android .apk bundle. It will be renamed correctly.
+                  Upload the latest Android .apk bundle. Ensure it is named <code>LunuNeth_AI.apk</code>.
                 </p>
                 
                 {uploadingRelease === 'android' ? (
