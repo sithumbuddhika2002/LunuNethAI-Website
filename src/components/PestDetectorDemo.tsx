@@ -18,17 +18,13 @@ export default function PestDetectorDemo() {
         {/* Background Grid Pattern + Onion Plants SVG */}
         <svg className="pest-bg-svg" viewBox="0 0 400 250" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#081e14" />
-              <stop offset="100%" stopColor="#040e0a" />
-            </linearGradient>
             <pattern id="cropGrid" width="25" height="25" patternUnits="userSpaceOnUse">
               <path d="M 25 0 L 0 0 0 25" fill="none" stroke="rgba(16, 185, 129, 0.03)" strokeWidth="0.5"/>
             </pattern>
           </defs>
           
           {/* Background */}
-          <rect width="400" height="250" fill="url(#skyGrad)" />
+          <rect width="400" height="250" fill="var(--bg-card)" />
           <rect width="400" height="250" fill="url(#cropGrid)" />
           
           {/* Ground */}
@@ -66,9 +62,9 @@ export default function PestDetectorDemo() {
           </g>
 
           {/* Thrips pest representations (small glowing indicators inside the plants) */}
-          <circle cx="85" cy="155" r="3" fill="#eab308" filter="drop-shadow(0 0 4px #eab308)" />
-          <circle cx="178" cy="115" r="3" fill="#eab308" filter="drop-shadow(0 0 4px #eab308)" />
-          <circle cx="310" cy="140" r="3" fill="#eab308" filter="drop-shadow(0 0 4px #eab308)" />
+          <circle cx="85" cy="155" r="3" fill="#eab308" />
+          <circle cx="178" cy="115" r="3" fill="#eab308" />
+          <circle cx="310" cy="140" r="3" fill="#eab308" />
         </svg>
 
         {/* Bounding Boxes */}
@@ -82,7 +78,7 @@ export default function PestDetectorDemo() {
               width: pest.width,
               height: pest.height,
               borderColor: hoveredBox === pest.id || hoveredBox === null ? '#ef4444' : 'rgba(239, 68, 68, 0.3)',
-              boxShadow: hoveredBox === pest.id ? '0 0 15px rgba(239, 68, 68, 0.6)' : 'none',
+              boxShadow: 'none',
               transform: hoveredBox === pest.id ? 'scale(1.05)' : 'scale(1)'
             }}
             onMouseEnter={() => setHoveredBox(pest.id)}

@@ -61,10 +61,10 @@ export default function DownloadSection() {
 
       {/* iOS Download Card */}
       <div className="glass-card download-card">
-        <div className="download-icon" style={{ color: '#00ff87', filter: 'drop-shadow(0 0 12px rgba(0, 255, 135, 0.3))' }}>
+        <div className="download-icon" style={{ color: 'var(--accent-secondary)', filter: 'none' }}>
           <Smartphone className="w-12 h-12" />
         </div>
-        <h3 className="gradient-text" style={{ background: 'linear-gradient(135deg, var(--text-primary), var(--accent-secondary))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+        <h3 className="gradient-text" style={{ color: 'var(--accent-primary)' }}>
           iOS Installation
         </h3>
         <p style={{ fontSize: '0.95rem', marginBottom: '1rem' }}>
@@ -123,10 +123,10 @@ export default function DownloadSection() {
 
       {/* Windows Download Card */}
       <div className="glass-card download-card">
-        <div className="download-icon" style={{ color: '#00a4ef', filter: 'drop-shadow(0 0 12px rgba(0, 164, 239, 0.3))' }}>
+        <div className="download-icon" style={{ color: '#00a4ef', filter: 'none' }}>
           <Monitor className="w-12 h-12" />
         </div>
-        <h3 className="gradient-text" style={{ background: 'linear-gradient(135deg, var(--text-primary), #00a4ef)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+        <h3 className="gradient-text" style={{ color: 'var(--accent-primary)' }}>
           Windows Installation
         </h3>
         <p style={{ fontSize: '0.95rem', marginBottom: '1rem' }}>
@@ -149,7 +149,7 @@ export default function DownloadSection() {
           <a 
             href="https://github.com/sithumbuddhika2002/LunuNethAI-Website/releases/download/v1.0.0/LunuNeth_AI_Setup.exe" 
             className="gradient-btn"
-            style={{ justifyContent: 'center', background: 'linear-gradient(90deg, #0078d7, #00a4ef)' }}
+            style={{ justifyContent: 'center', background: 'var(--accent-primary)' }}
             download
           >
             <Download className="w-4 h-4" /> Download Windows App

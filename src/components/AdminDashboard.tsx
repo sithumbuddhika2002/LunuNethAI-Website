@@ -428,7 +428,7 @@ export default function AdminDashboard() {
             <Lock className="w-8 h-8 text-emerald-400" />
           </div>
           
-          <h2 style={{ fontSize: '1.75rem', marginTop: '1.5rem', marginBottom: '0.5rem', background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          <h2 style={{ fontSize: '1.75rem', marginTop: '1.5rem', marginBottom: '0.5rem', color: 'var(--accent-primary)' }}>
             LunuNeth AI Admin
           </h2>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '2rem' }}>
@@ -461,7 +461,7 @@ export default function AdminDashboard() {
           </form>
 
           <div style={{ marginTop: '2rem', padding: '0.75rem', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '6px', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            <strong>Default Code:</strong> <code style={{ color: 'var(--accent-secondary)', fontSize: '0.8rem', background: 'rgba(0,0,0,0.2)', padding: '2px 6px', borderRadius: '4px' }}>admin123</code>
+            <strong>Default Code:</strong> <code style={{ color: 'var(--accent-secondary)', fontSize: '0.8rem', background: 'var(--bg-glass)', padding: '2px 6px', borderRadius: '4px' }}>admin123</code>
           </div>
         </div>
       </div>
@@ -574,7 +574,7 @@ export default function AdminDashboard() {
                             className="cat-progress-fill" 
                             style={{ 
                               width: `${percent}%`, 
-                              background: `linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))`
+                              background: 'var(--accent-primary)'
                             }}
                           ></div>
                         </div>
@@ -675,11 +675,11 @@ export default function AdminDashboard() {
                       <span>{uploadProgress}%</span>
                     </div>
                     <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
-                      <div style={{ width: `${uploadProgress}%`, height: '100%', background: 'linear-gradient(90deg, #0078d7, #00a4ef)', transition: 'width 0.3s ease' }}></div>
+                      <div style={{ width: `${uploadProgress}%`, height: '100%', background: 'var(--accent-primary)', transition: 'width 0.3s ease' }}></div>
                     </div>
                   </div>
                 ) : (
-                  <label className="gradient-btn" style={{ cursor: 'pointer', width: '100%', justifyContent: 'center', background: 'linear-gradient(90deg, #0078d7, #00a4ef)' }}>
+                  <label className="gradient-btn" style={{ cursor: 'pointer', width: '100%', justifyContent: 'center', background: 'var(--accent-primary)' }}>
                     Upload Windows EXE
                     <input 
                       type="file" 
@@ -987,7 +987,7 @@ export default function AdminDashboard() {
                     <div style={{ 
                       flex: 1, 
                       minHeight: '280px', 
-                      background: 'rgba(5, 12, 10, 0.95)', 
+                      background: 'var(--bg-glass)',
                       border: '1px solid var(--border-glass)', 
                       borderRadius: '12px', 
                       display: 'flex', 

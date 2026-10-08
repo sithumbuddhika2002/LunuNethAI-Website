@@ -1,10 +1,19 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/jpeg" href="/logo.jpeg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
+    <script>
+      // Apply the preference before first paint to avoid a theme flash.
+      (() => {
+        let theme;
+        try { theme = localStorage.getItem('lununeth-theme'); } catch {}
+        document.documentElement.dataset.theme = theme === 'light' || theme === 'dark'
+          ? theme : 'light';
+      })();
+    </script>
     <!-- SEO Meta Tags -->
     <title>LunuNeth AI | Advanced Crop Advisory & Disease Classification Platform</title>
     <meta name="description" content="LunuNeth AI is an advanced crop advisory platform using deep learning models for onion leaf disease classification, thrips pest detection, nutrient deficiency tracking, and spatio-temporal disease probability forecasting." />
@@ -18,10 +27,10 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Galada&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Galada&display=swap" rel="stylesheet">
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   </head>
-  <body class="dark-theme">
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

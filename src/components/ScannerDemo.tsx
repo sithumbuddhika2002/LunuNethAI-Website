@@ -88,7 +88,7 @@ export default function ScannerDemo() {
           className={`chat-option-btn ${activeTab === 'disease' ? 'active' : ''}`}
           style={{ 
             background: activeTab === 'disease' ? 'var(--accent-primary)' : 'transparent',
-            color: activeTab === 'disease' ? '#05140d' : 'var(--text-secondary)',
+            color: activeTab === 'disease' ? 'var(--on-accent)' : 'var(--text-secondary)',
             fontWeight: 600,
             border: 'none',
             padding: '0.5rem 1.25rem'
@@ -101,7 +101,7 @@ export default function ScannerDemo() {
           className={`chat-option-btn ${activeTab === 'nutrient' ? 'active' : ''}`}
           style={{ 
             background: activeTab === 'nutrient' ? 'var(--accent-primary)' : 'transparent',
-            color: activeTab === 'nutrient' ? '#05140d' : 'var(--text-secondary)',
+            color: activeTab === 'nutrient' ? 'var(--on-accent)' : 'var(--text-secondary)',
             fontWeight: 600,
             border: 'none',
             padding: '0.5rem 1.25rem'
@@ -173,7 +173,7 @@ export default function ScannerDemo() {
             className="heatmap-overlay"
             style={{
               background: activeTab === 'nutrient' 
-                ? 'radial-gradient(circle at 50% 12%, rgba(239, 68, 68, 0.8) 0%, rgba(245, 158, 11, 0.6) 25%, rgba(16, 185, 129, 0.0) 65%)'
+                ? 'rgba(196, 87, 58, 0.3)'
                 : 'transparent'
             }}
           ></div>
