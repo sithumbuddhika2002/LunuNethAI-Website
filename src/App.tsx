@@ -8,7 +8,6 @@ import {
   Activity, 
   GitMerge, 
   Target, 
-  Map, 
   Mail, 
   Phone, 
   MapPin, 
@@ -21,6 +20,13 @@ import {
   TrendingUp,
   Leaf
 } from 'lucide-react';
+
+import leafIcon from './assets/feature-icons/leaf-fill.svg';
+import pestIcon from './assets/feature-icons/bug-fill.svg';
+import nutrientIcon from './assets/feature-icons/droplet-fill.svg';
+import chatIcon from './assets/feature-icons/chat-dots-fill.svg';
+import forecastIcon from './assets/feature-icons/globe-americas.svg';
+import backendIcon from './assets/feature-icons/hdd-rack-fill.svg';
 
 // Import custom components
 const LiveDemoPage = lazy(() => import('./components/LiveDemoPage'));
@@ -761,7 +767,7 @@ export default function App() {
               {/* Feature 1 */}
               <div className="glass-card feature-card">
                 <div className="feature-icon-wrapper flex-center">
-                  <Sprout />
+                  <span className="feature-standard-icon" aria-hidden="true" style={{ maskImage: `url(${leafIcon})`, WebkitMaskImage: `url(${leafIcon})` }} />
                 </div>
                 <h3 className="feature-title">Onion Leaf Classifier</h3>
                 <p className="feature-desc">
@@ -772,7 +778,7 @@ export default function App() {
               {/* Feature 2 */}
               <div className="glass-card feature-card">
                 <div className="feature-icon-wrapper flex-center" style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.2)', background: 'rgba(239, 68, 68, 0.05)' }}>
-                  <Target />
+                  <span className="feature-standard-icon" aria-hidden="true" style={{ maskImage: `url(${pestIcon})`, WebkitMaskImage: `url(${pestIcon})` }} />
                 </div>
                 <h3 className="feature-title">Thrips Pest Detector</h3>
                 <p className="feature-desc">
@@ -783,7 +789,7 @@ export default function App() {
               {/* Feature 3 */}
               <div className="glass-card feature-card">
                 <div className="feature-icon-wrapper flex-center" style={{ color: 'var(--accent-secondary)', borderColor: 'rgba(0, 255, 135, 0.2)', background: 'rgba(0, 255, 135, 0.05)' }}>
-                  <Activity />
+                  <span className="feature-standard-icon" aria-hidden="true" style={{ maskImage: `url(${nutrientIcon})`, WebkitMaskImage: `url(${nutrientIcon})` }} />
                 </div>
                 <h3 className="feature-title">Nutrient deficiency</h3>
                 <p className="feature-desc">
@@ -794,7 +800,7 @@ export default function App() {
               {/* Feature 4 */}
               <div className="glass-card feature-card">
                 <div className="feature-icon-wrapper flex-center" style={{ color: '#a78bfa', borderColor: 'rgba(167, 139, 250, 0.2)', background: 'rgba(167, 139, 250, 0.05)' }}>
-                  <Bot />
+                  <span className="feature-standard-icon" aria-hidden="true" style={{ maskImage: `url(${chatIcon})`, WebkitMaskImage: `url(${chatIcon})` }} />
                 </div>
                 <h3 className="feature-title">AgriBot Chat Advisor</h3>
                 <p className="feature-desc">
@@ -805,7 +811,7 @@ export default function App() {
               {/* Feature 5 */}
               <div className="glass-card feature-card">
                 <div className="feature-icon-wrapper flex-center" style={{ color: '#f59e0b', borderColor: 'rgba(245, 158, 11, 0.2)', background: 'rgba(245, 158, 11, 0.05)' }}>
-                  <Map />
+                  <span className="feature-standard-icon" aria-hidden="true" style={{ maskImage: `url(${forecastIcon})`, WebkitMaskImage: `url(${forecastIcon})` }} />
                 </div>
                 <h3 className="feature-title">ST-GNN Outbreak Forecast</h3>
                 <p className="feature-desc">
@@ -816,7 +822,7 @@ export default function App() {
               {/* Feature 6 */}
               <div className="glass-card feature-card">
                 <div className="feature-icon-wrapper flex-center" style={{ color: '#10b981', borderColor: 'rgba(16, 185, 129, 0.2)', background: 'rgba(16, 185, 129, 0.05)' }}>
-                  <GitMerge />
+                  <span className="feature-standard-icon" aria-hidden="true" style={{ maskImage: `url(${backendIcon})`, WebkitMaskImage: `url(${backendIcon})` }} />
                 </div>
                 <h3 className="feature-title">Multi-Agent Backend</h3>
                 <p className="feature-desc">

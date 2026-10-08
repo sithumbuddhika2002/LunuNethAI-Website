@@ -127,6 +127,8 @@
 .research-document summary:hover { background: var(--bg-glass-subtle); }
 .research-overview summary::-webkit-details-marker { display: none; }
 .research-document-icon { display: grid; place-items: center; width: 46px; height: 52px; background: rgba(16,185,129,.07); color: var(--research-accent); border: 1px solid var(--border-glass-accent); border-radius: 6px; flex-shrink: 0; }
+.research-file-type-icon { background: transparent; border: 0; border-radius: 0; }
+.research-file-type-icon svg { max-width: 100%; max-height: 100%; }
 .research-document strong { display: block; font-family: var(--font-display); font-size: 1.05rem; font-weight: 500; }
 .research-document small { display: block; margin-top: .45rem; font-size: .7rem; color: var(--text-secondary); }
 .research-document-read { margin-left: auto; font-size: .73rem; color: var(--research-accent); white-space: nowrap; }

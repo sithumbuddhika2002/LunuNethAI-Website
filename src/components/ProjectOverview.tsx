@@ -139,7 +139,25 @@ export default function ProjectOverview() {
                 </header>
                 {documents.length > 0 ? <div className="research-pdf-list">
                   {documents.map(item => <article className="research-pdf-row" key={item.url}>
-                    <span className="research-document-icon"><FileText size={23} /></span>
+                    <span className="research-document-icon research-file-type-icon" aria-hidden="true">
+                      {item.format === 'PPTX' ? (
+                        <svg width="40" height="44" viewBox="0 0 48 48" focusable="false">
+                          <circle cx="29" cy="24" r="18" fill="#D35230" />
+                          <path d="M29 6a18 18 0 0 1 18 18H29Z" fill="#FF8F6B" />
+                          <path d="M29 24h18a18 18 0 0 1-18 18Z" fill="#ED6C47" />
+                          <rect x="1" y="11" width="26" height="26" rx="3" fill="#B7472A" />
+                          <path d="M10 16h6a5 5 0 0 1 0 10h-3v6h-3Zm3 3v4h3a2 2 0 0 0 0-4Z" fill="#FFF" />
+                        </svg>
+                      ) : (
+                        <svg width="36" height="44" viewBox="0 0 36 44" focusable="false">
+                          <path d="M4 1h19l9 9v30a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3V4a3 3 0 0 1 3-3Z" fill="#FFF" stroke="#D6D6D6" />
+                          <path d="M23 1v9h9" fill="#F2F2F2" stroke="#D6D6D6" />
+                          <path d="M9 28c4-5 9-16 8-19-2-4-5 7 4 14 8 5 10-1 4-1-7-1-19 4-18 7 1 2 4-1 5-3" fill="none" stroke="#E5252A" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                          <rect x="0" y="32" width="33" height="12" rx="2" fill="#E5252A" />
+                          <text x="16.5" y="41" textAnchor="middle" fontFamily="Arial, sans-serif" fontSize="9" fontWeight="700" fill="#FFF">PDF</text>
+                        </svg>
+                      )}
+                    </span>
                     <div className="research-pdf-title"><h4>{item.title}</h4><p>{item.format} · {item.filename}</p></div>
                     <div className="research-pdf-actions">
                       <a href={item.url} target="_blank" rel="noopener noreferrer" aria-label={`View ${item.title} on Google Drive in a new tab`}>View <ArrowRight size={16} /></a>
