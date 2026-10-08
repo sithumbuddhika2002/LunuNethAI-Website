@@ -1,217 +1,76 @@
-import { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { Shield, Activity } from 'lucide-react';
+import { ScanLine, Leaf, RotateCcw, Check, FlaskConical } from 'lucide-react';
+import { DemoAppImage, DemoScreenReference } from './DemoAppImage';
 
 gsap.registerPlugin(useGSAP);
 
+// Values transcribed from the supplied app captures, not model accuracy claims.
+const probabilities = [
+  ['Purple Blotch Severe', '38.4%'], ['Anthracnose Severe', '29.9%'],
+  ['Purple Blotch Early', '18.5%'], ['Healthy', '7.0%'], ['Anthracnose Early', '6.2%'],
+];
+const nutrients = {
+  N: { name: 'Nitrogen', score: 26, note: 'The app sample recommends monitoring and re-checking in 2 weeks.', fertilizer: 'Urea (46% N)' },
+  P: { name: 'Phosphorus', score: 13, note: 'The app sample reports adequate levels and suggests re-checking in 3 weeks.', fertilizer: 'Triple Super Phosphate (TSP)' },
+  K: { name: 'Potassium', score: 22, note: 'The app sample marks this stress score as adequate. A potassium recommendation is not visible in this capture.', fertilizer: 'Potassium status' },
+};
+
 export default function ScannerDemo() {
-  const [activeTab, setActiveTab] = useState<'disease' | 'nutrient'>('disease');
+  const [mode, setMode] = useState<'disease' | 'nutrient'>('disease');
   const [scanning, setScanning] = useState(false);
-  const [hasScanned, setHasScanned] = useState(false);
+  const [complete, setComplete] = useState(false);
+  const [nutrient, setNutrient] = useState<keyof typeof nutrients>('N');
+  const root = useRef<HTMLDivElement>(null);
+  const line = useRef<HTMLDivElement>(null);
+  const { contextSafe } = useGSAP({ scope: root });
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const laserRef = useRef<HTMLDivElement>(null);
-  const heatmapRef = useRef<HTMLDivElement>(null);
-
-  const startScan = () => {
+  const scan = () => contextSafe(() => {
     if (scanning) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { setComplete(true); return; }
     setScanning(true);
-    setHasScanned(false);
-
-    // Reset components
-    gsap.set(laserRef.current, { y: 0, opacity: 1, display: 'block' });
-    if (heatmapRef.current) gsap.set(heatmapRef.current, { opacity: 0 });
-
-    // GSAP Timeline for scanning animation
-    const tl = gsap.timeline({
+    setComplete(false);
+    gsap.fromTo(line.current, { scaleY: 0, opacity: 1 }, {
+      scaleY: 1, duration: 1.1, ease: 'power1.inOut',
       onComplete: () => {
+        gsap.set(line.current, { opacity: 0 });
         setScanning(false);
-        setHasScanned(true);
-        gsap.set(laserRef.current, { display: 'none' });
-        
-        // If nutrient deficiency selected, animate the Grad-CAM heatmap overlay
-        if (activeTab === 'nutrient' && heatmapRef.current) {
-          gsap.to(heatmapRef.current, {
-            opacity: 1,
-            duration: 0.8,
-            ease: 'power2.out',
-          });
-        }
-      }
+        setComplete(true);
+      },
     });
+  })();
 
-    // Animate scanning laser down and back up
-    tl.to(laserRef.current, {
-      y: 350,
-      duration: 1.2,
-      ease: 'power1.inOut'
-    })
-    .to(laserRef.current, {
-      y: 0,
-      duration: 1.0,
-      ease: 'power1.inOut'
-    })
-    .to(laserRef.current, {
-      opacity: 0,
-      duration: 0.2
-    });
-  };
-
-  const results = {
-    disease: {
-      label: 'Purple Blotch Detected',
-      confidence: '94.2%',
-      model: 'TFLite Leaf Disease Classifier',
-      desc: 'Significant purple lesions with yellow halos observed. This indicates Alternaria porri infection.',
-      advice: 'Ensure adequate drainage. Apply copper fungicides or Mancozeb as per guidelines.',
-      icon: <Shield className="w-5 h-5 text-red-500" />
-    },
-    nutrient: {
-      label: 'Nitrogen (N) Deficiency',
-      confidence: '88.7%',
-      model: 'EfficientNet Nutrient Checker + Grad-CAM',
-      desc: 'Chlorosis starting from the tips of older leaves. Grad-CAM confirms activation focus on leaf tip.',
-      advice: 'Apply Nitrogen fertilizer (Urea) or nitrogen-rich compost to correct deficiency.',
-      icon: <Activity className="w-5 h-5 text-yellow-500" />
-    }
-  };
-
-  const currentResult = results[activeTab];
-
+  const selected = nutrients[nutrient];
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', width: '100%', alignItems: 'center' }}>
-      {/* Mode Selectors */}
-      <div style={{ display: 'inline-flex', background: 'rgba(255, 255, 255, 0.05)', padding: '0.35rem', borderRadius: '50px', border: '1px solid var(--border-glass)' }}>
-        <button 
-          onClick={() => { setActiveTab('disease'); setHasScanned(false); }}
-          className={`chat-option-btn ${activeTab === 'disease' ? 'active' : ''}`}
-          style={{ 
-            background: activeTab === 'disease' ? 'var(--accent-primary)' : 'transparent',
-            color: activeTab === 'disease' ? 'var(--on-accent)' : 'var(--text-secondary)',
-            fontWeight: 600,
-            border: 'none',
-            padding: '0.5rem 1.25rem'
-          }}
-        >
-          Disease Classifier
-        </button>
-        <button 
-          onClick={() => { setActiveTab('nutrient'); setHasScanned(false); }}
-          className={`chat-option-btn ${activeTab === 'nutrient' ? 'active' : ''}`}
-          style={{ 
-            background: activeTab === 'nutrient' ? 'var(--accent-primary)' : 'transparent',
-            color: activeTab === 'nutrient' ? 'var(--on-accent)' : 'var(--text-secondary)',
-            fontWeight: 600,
-            border: 'none',
-            padding: '0.5rem 1.25rem'
-          }}
-        >
-          Nutrient Deficiency (Grad-CAM)
-        </button>
+    <div className="ld-app-demo" ref={root}>
+      <div className="ld-mode-switch" role="group" aria-label="Choose an analysis">
+        <button aria-pressed={mode === 'disease'} disabled={scanning} onClick={() => { setMode('disease'); setComplete(false); }}><Leaf size={17} /> Disease</button>
+        <button aria-pressed={mode === 'nutrient'} disabled={scanning} onClick={() => { setMode('nutrient'); setComplete(false); }}><FlaskConical size={17} /> Nutrients</button>
       </div>
-
-      {/* Simulator Device Frame */}
-      <div ref={containerRef} className="scanner-demo-container">
-        <div className="scanner-instructions">
-          {scanning ? 'Running Inference...' : 'Hover/Click Scan to test'}
-        </div>
-
-        <div className="scanner-image-wrapper" onClick={startScan}>
-          {/* Laser Guide Line */}
-          <div ref={laserRef} className="scanner-laser-line"></div>
-
-          {/* Leaf Graphic (SVG for crisp responsive scaling) */}
-          <svg className="scanner-leaf-svg" viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {/* Background Grid */}
-            <defs>
-              <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(16, 185, 129, 0.05)" strokeWidth="0.8"/>
-              </pattern>
-            </defs>
-            <rect width="200" height="250" fill="url(#grid)" />
-            
-            {/* Leaf Outline */}
-            <path 
-              d="M 100 220 C 130 180 160 120 140 60 C 130 30 115 15 100 5 C 85 15 70 30 60 60 C 40 120 70 180 100 220 Z" 
-              fill="rgba(16, 185, 129, 0.12)" 
-              stroke="rgba(16, 185, 129, 0.3)" 
-              strokeWidth="2" 
-            />
-            {/* Leaf Veins */}
-            <path d="M 100 220 Q 100 112 100 5" stroke="rgba(16, 185, 129, 0.25)" strokeWidth="1.5" />
-            <path d="M 100 170 Q 120 150 132 135" stroke="rgba(16, 185, 129, 0.2)" strokeWidth="1.2" />
-            <path d="M 100 170 Q 80 150 68 135" stroke="rgba(16, 185, 129, 0.2)" strokeWidth="1.2" />
-            <path d="M 100 120 Q 125 100 138 80" stroke="rgba(16, 185, 129, 0.2)" strokeWidth="1.2" />
-            <path d="M 100 120 Q 75 100 62 80" stroke="rgba(16, 185, 129, 0.2)" strokeWidth="1.2" />
-
-            {/* Disease Spot (Only displays or triggers on disease mode) */}
-            {activeTab === 'disease' && (
-              <>
-                {/* Purple Blotch spot */}
-                <ellipse cx="120" cy="110" rx="14" ry="8" fill="#4c1d95" opacity="0.6" />
-                <ellipse cx="120" cy="110" rx="8" ry="4" fill="#6d28d9" opacity="0.8" />
-                <ellipse cx="120" cy="110" rx="4" ry="2" fill="#8b5cf6" />
-                {/* Yellowing Halo */}
-                <path d="M 100 105 A 25 25 0 0 1 138 122" stroke="#eab308" strokeWidth="2" strokeDasharray="3 3" opacity="0.7" />
-              </>
-            )}
-
-            {/* Nutrient tip yellowing indicator */}
-            {activeTab === 'nutrient' && (
-              <path 
-                d="M 100 5 C 108 12 113 22 110 32 C 105 28 95 28 90 32 C 87 22 92 12 100 5 Z" 
-                fill="#eab308" 
-                opacity="0.55" 
-              />
-            )}
-          </svg>
-
-          {/* Grad-CAM Heatmap overlay wrapper (activated in nutrient mode post-scan) */}
-          <div 
-            ref={heatmapRef} 
-            className="heatmap-overlay"
-            style={{
-              background: activeTab === 'nutrient' 
-                ? 'rgba(196, 87, 58, 0.3)'
-                : 'transparent'
-            }}
-          ></div>
-
-          {/* HUD Overlay scanner UI */}
-          <div className="scanner-ui">
-            {hasScanned ? (
-              <div>
-                <div className="scanner-hud-label">{currentResult.model}</div>
-                <div className="scanner-result-title">
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    {currentResult.icon}
-                    {currentResult.label}
-                  </span>
-                  <span className="scanner-confidence">{currentResult.confidence}</span>
-                </div>
-                <div className="scanner-details" style={{ marginBottom: '0.4rem' }}>
-                  {currentResult.desc}
-                </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--accent-secondary)', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '0.4rem', display: 'flex', gap: '0.25rem' }}>
-                  <strong>Recommendation:</strong> {currentResult.advice}
-                </div>
-              </div>
-            ) : (
-              <div style={{ textAlign: 'center', padding: '1rem 0' }}>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); startScan(); }}
-                  disabled={scanning}
-                  className="gradient-btn"
-                  style={{ padding: '0.6rem 1.5rem', fontSize: '0.9rem' }}
-                >
-                  {scanning ? 'Analyzing Crop...' : 'Analyze Leaf Scan'}
-                </button>
-              </div>
-            )}
+      <div className="ld-app-panel">
+        <header className="ld-panel-header"><span>{mode === 'disease' ? 'Leaf disease check' : 'Nutrient health check'}</span><span className="ld-preview-label">Sample preview</span></header>
+        <div className="ld-photo-stage"><DemoAppImage key={mode} screen={mode} /><div className="ld-scan-sweep" ref={line} aria-hidden="true" /></div>
+        <div className="ld-panel-content">
+          <button className="ld-button ld-scan-button" onClick={scan} disabled={scanning}>{complete ? <RotateCcw size={17} /> : <ScanLine size={17} />}{scanning ? 'Replaying analysis...' : complete ? 'Replay sample scan' : 'Analyze this sample'}</button>
+          <div aria-live="polite" aria-busy={scanning}>
+            {!complete ? <p className="ld-help-text">{scanning ? 'Revealing the saved app result.' : 'Try the crop photo from our mobile app. No camera or upload needed.'}</p> : <>
+              <p className="ld-complete"><Check size={15} /> Sample analysis complete</p>
+              <div className="ld-result-heading"><div><span>{mode === 'disease' ? 'Diagnosis result' : 'Primary deficiency detected'}</span><h3>{mode === 'disease' ? 'Purple Blotch (Severe)' : 'N-Deficiency'}</h3></div><div className="ld-confidence"><strong>{mode === 'disease' ? '38.4%' : '31.1%'}</strong><span>confidence</span></div></div>
+              {mode === 'disease' ? <>
+                <p className="ld-help-text">Mid stage · This supplied app capture uses mock mode. Scores below are example class probabilities.</p>
+                <details className="ld-result-details" open><summary>Compare classifications</summary><dl className="ld-probabilities">{probabilities.map(([label, value], index) => <div key={label} className={index === 0 ? 'is-leading' : ''}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></details>
+              </> : <>
+                <dl className="ld-nutrient-classes"><div><dt>Healthy</dt><dd>27.6%</dd></div><div><dt>K-Deficiency</dt><dd>25.7%</dd></div><div><dt>N-Deficiency</dt><dd>31.1%</dd></div><div><dt>P-Deficiency</dt><dd>15.6%</dd></div></dl>
+                <h4 className="ld-small-heading">Explore NPK stress scores</h4>
+                <div className="ld-npk" role="group" aria-label="Select a nutrient">{(Object.keys(nutrients) as (keyof typeof nutrients)[]).map((key) => <button key={key} onClick={() => setNutrient(key)} aria-pressed={nutrient === key} aria-label={`${nutrients[key].name}, ${nutrients[key].score}% stress, adequate`}><span>{key}</span><strong>{nutrients[key].score}%</strong><small>Adequate</small></button>)}</div>
+                <div className="ld-nutrient-note"><strong>{selected.fertilizer}</strong><p>{selected.note}</p></div>
+              </>}
+            </>}
           </div>
         </div>
       </div>
+      <DemoScreenReference key={mode} screen={mode} />
     </div>
   );
 }

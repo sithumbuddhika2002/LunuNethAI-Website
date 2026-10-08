@@ -1,155 +1,131 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Send, Bot } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Bot, Send, RotateCcw } from 'lucide-react';
+import { DemoScreenReference } from './DemoAppImage';
 
-interface Message {
-  id: number;
-  sender: 'bot' | 'user';
-  text: string;
-  options?: string[];
-}
+const copy = {
+  en: {
+    greeting: 'Hello! Let’s take a closer look at your onion crop. Choose a concern to try a guided conversation.',
+    concerns: ['My onion leaves are yellow', 'I can see small insects', 'There are purple leaf spots'],
+    question: 'Can you see insects on the plant? Check between the leaves, then choose the closest answer.',
+    answers: ['Small yellow or brown insects', 'Caterpillars or worms', 'No insects visible', 'I’m not sure'],
+    next: 'Where do you notice the change most?',
+    locations: ['Leaf tips', 'Older leaves', 'Across the plant'],
+    finish: 'Thanks. This is how the app gathers clues before offering guidance. For this example, the next step is a clear close-up photo of the affected leaf. Try the disease and pest samples to explore the results.',
+    unknown: 'This preview has scripted answers. Choose one of the options below to continue the example.',
+    placeholder: 'Describe your crop concern...',
+    restart: 'Start again',
+    title: 'LunuNeth Chatbot',
+    language: 'Language',
+    followup: 'Follow-up question',
+    prompt: 'Choose an answer or type its number.',
+    sample: 'Guided example · Scripted replies',
+  },
+  si: {
+    greeting: 'ආයුබෝවන්! ඔබේ ලූනු වගාවේ ගැටලුවක් තෝරන්න.',
+    concerns: ['ලූනු කොළ කහ වෙලා', 'කුඩා කෘමීන් පෙනෙනවා', 'කොළවල දම් පැහැ ලප තිබෙනවා'],
+    question: 'පැළවල කෘමීන් පෙනෙනවාද? කොළ අතර පරීක්ෂා කර පිළිතුරක් තෝරන්න.',
+    answers: ['කුඩා කහ හෝ දුඹුරු කෘමීන්', 'දළඹුවන් හෝ පණුවන්', 'කෘමීන් පෙනෙන්නේ නැහැ', 'විශ්වාස නැහැ'],
+    next: 'වෙනස වැඩිපුර පෙනෙන්නේ කොතැනද?',
+    locations: ['කොළ අග', 'පරණ කොළ', 'මුළු පැළය පුරා'],
+    finish: 'ස්තූතියි. මෙලෙස යෙදුම ඔබේ වගාව පිළිබඳ තොරතුරු රැස් කරයි. ඊළඟට බලපෑමට ලක්වූ කොළයක පැහැදිලි ඡායාරූපයක් ගන්න. ඉහත රෝග සහ කෘමි උදාහරණ බලන්න.',
+    unknown: 'මෙය සූදානම් කළ පිළිතුරු සහිත උදාහරණයකි. ඉදිරියට යාමට පහත පිළිතුරක් තෝරන්න.',
+    placeholder: 'වගාවේ ගැටලුව ලියන්න...',
+    restart: 'නැවත අරඹන්න',
+    title: 'LunuNeth Chatbot',
+    language: 'භාෂාව',
+    followup: 'පසු විමසුම් ප්‍රශ්නය',
+    prompt: 'පිළිතුරක් තෝරන්න හෝ එහි අංකය ලියන්න.',
+    sample: 'උදාහරණයක් · සූදානම් කළ පිළිතුරු',
+  },
+  singlish: {
+    greeting: 'Ayubowan! Oyage lunu wagaawe gataluwak thoranna.',
+    concerns: ['Lunu kola kaha wela', 'Kuda krumin penenawa', 'Kola wala dam paata lapa thiyenawa'],
+    question: 'Pala wala krumin penenawada? Kola athara balala pilithurak thoranna.',
+    answers: ['Kuda kaha ho dumburu krumin', 'Dalambuwan ho panuwan', 'Krumin penenne naha', 'Vishwasa naha'],
+    next: 'Wenasa wedipura penenne koheda?',
+    locations: ['Kola aga', 'Parana kola', 'Mulu palaya pura'],
+    finish: 'Sthuthiyi. App eka me widihata wagaawe thorathuru ekathu karanawa. Ilangata balapam athi kolayaka pehedili photo ekak ganna. Ihatha disease saha pest samples balanna.',
+    unknown: 'Meka kalin sakas kala pilithuru sahitha demo ekak. Pahatha pilithurak thorala idiriyata yanna.',
+    placeholder: 'Wagaawe gataluwa liyanna...',
+    restart: 'Newatha arambanna',
+    title: 'LunuNeth Chatbot',
+    language: 'Bhashawa',
+    followup: 'Thawath prashnayak',
+    prompt: 'Pilithurak thoranna, nathnam eke ankaya liyanna.',
+    sample: 'Demo ekak · Sakas kala pilithuru',
+  },
+};
+type Language = keyof typeof copy;
+type Message = { sender: 'bot' | 'user'; text: string; question?: boolean };
 
 export default function AgriBotDemo() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      sender: 'bot',
-      text: "Hello! I'm AgriBot, your LunuNeth AI crop advisor. Select a query below, or type your crop concern to begin.",
-      options: [
-        "Leaf disease diagnosis help",
-        "How to control Thrips pests?",
-        "How does disease forecasting work?"
-      ]
-    }
-  ]);
-  const [inputText, setInputText] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const chatEndRef = useRef<HTMLDivElement>(null);
+  const [language, setLanguage] = useState<Language>('en');
+  const [messages, setMessages] = useState<Message[]>([{ sender: 'bot', text: copy.en.greeting }]);
+  const [stage, setStage] = useState(0);
+  const [input, setInput] = useState('');
+  const [typing, setTyping] = useState(false);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const text = copy[language];
+  const options = stage === 0 ? text.concerns : stage === 1 ? text.answers : stage === 2 ? text.locations : [];
 
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
-  }, [messages, isTyping]);
+    const body = bodyRef.current;
+    body?.scrollTo({ top: body.scrollHeight, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+  }, [messages, typing]);
 
-  const triggerBotResponse = (userText: string) => {
-    setIsTyping(true);
-
-    setTimeout(() => {
-      setIsTyping(false);
-      let reply = '';
-      let options: string[] = [];
-
-      if (userText.toLowerCase().includes('disease') || userText.toLowerCase().includes('leaf') || userText.toLowerCase().includes('diagnosis')) {
-        reply = "I can help diagnose leaf issues! LunuNeth AI has a specialized Classifier that uses deep learning (TFLite models) to detect Purple Blotch and Leaf Twist Disease (LTD). Would you like to know how to take a proper diagnostic photo?";
-        options = ["Yes, show photo guidelines", "No, show other options"];
-      } else if (userText.toLowerCase().includes('thrips') || userText.toLowerCase().includes('control') || userText.toLowerCase().includes('pest')) {
-        reply = "For Thrips pest control: LunuNeth AI uses PyTorch Faster R-CNN object detection to spot pests early. I suggest installing blue or yellow sticky traps. For biological control, encourage predatory thrips or pirate bugs. Chemically, apply Neem formulations or Spinosad.";
-        options = ["Main Menu", "Ask another question"];
-      } else if (userText.toLowerCase().includes('forecasting') || userText.toLowerCase().includes('st-gnn') || userText.toLowerCase().includes('work')) {
-        reply = "Our forecasting system uses a Spatio-Temporal Graph Neural Network (ST-GNN). It models farms as nodes in a graph, analyzing local humidity, wind direction, temperature, and neighbor reports to predict disease probabilities for the coming 14 days.";
-        options = ["Check forecasting metrics", "Main Menu"];
-      } else if (userText.toLowerCase().includes('photo') || userText.toLowerCase().includes('guideline')) {
-        reply = "For the best diagnosis: 1. Take the photo in bright, natural daylight. 2. Capture a close-up of a single affected leaf. 3. Avoid shadows or hands covering the leaf. Our TFLite model runs directly on your mobile device for offline support!";
-        options = ["Main Menu"];
-      } else {
-        reply = "I understand. I am constantly training on agronomic datasets to offer specific crop advisory. Please try selecting one of our main options below or download our app for a full diagnostic scan.";
-        options = ["Leaf disease diagnosis help", "How to control Thrips pests?", "How does disease forecasting work?"];
-      }
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: prev.length + 1,
-          sender: 'bot',
-          text: reply,
-          options: options.length > 0 ? options : undefined
-        }
-      ]);
-    }, 1200);
+  const reset = (nextLanguage: Language = language) => {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = null;
+    setTyping(false);
+    setLanguage(nextLanguage);
+    setStage(0);
+    setInput('');
+    setMessages([{ sender: 'bot', text: copy[nextLanguage].greeting }]);
   };
 
-  const handleSendMessage = (text: string) => {
-    if (!text.trim()) return;
-
-    // Add user message
-    setMessages((prev) => [
-      ...prev,
-      { id: prev.length + 1, sender: 'user', text }
-    ]);
-    setInputText('');
-
-    triggerBotResponse(text);
+  const send = (value: string) => {
+    if (!value.trim() || timer.current) return;
+    const valueLower = value.trim().toLowerCase();
+    const numeric = /^[1-4]$/.test(valueLower) ? Number(valueLower) - 1 : -1;
+    const recognized = options.some(option => option.toLowerCase() === valueLower) ||
+      (numeric >= 0 && numeric < options.length) ||
+      (stage === 0 && /leaf|leaves|yellow|insect|pest|purple|kola|krumi|lunu|කොළ|කහ|කෘමි|ලූනු/.test(valueLower));
+    const nextStage = recognized ? Math.min(stage + 1, 3) : stage;
+    setMessages(previous => [...previous, { sender: 'user', text: value.trim() }]);
+    setInput('');
+    setTyping(true);
+    timer.current = setTimeout(() => {
+      timer.current = null;
+      setTyping(false);
+      setStage(nextStage);
+      setMessages(previous => [...previous, {
+        sender: 'bot',
+        text: !recognized ? text.unknown : nextStage === 1 ? text.question : nextStage === 2 ? text.next : text.finish,
+        question: recognized && nextStage < 3,
+      }]);
+    }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 450);
   };
 
   return (
-    <div className="glass-card agribot-chat-card">
-      {/* Chat Header */}
-      <div className="chat-header">
-        <div className="bot-avatar flex-center">
-          <Bot className="w-5 h-5" />
+    <div className="ld-app-demo">
+      <div className="ld-app-panel ld-guided-chat" lang={language === 'si' ? 'si' : 'en'}>
+        <header className="ld-panel-header"><span><Bot size={21} /> {text.title}</span><button className="ld-icon-button" onClick={() => reset()} aria-label={text.restart}><RotateCcw size={17} /></button></header>
+        <div className="ld-chat-tools"><span>{text.language}</span><div role="group" aria-label="Conversation language">{(['en', 'si', 'singlish'] as Language[]).map(lang => <button key={lang} aria-pressed={language === lang} onClick={() => reset(lang)}>{lang === 'en' ? 'EN' : lang === 'si' ? 'සිංහල' : 'Singlish'}</button>)}</div></div>
+        <p className="ld-chat-disclosure">{text.sample}</p>
+        <div className="chat-body" ref={bodyRef} role="log" aria-label="Guided crop conversation" aria-live="polite">
+          {messages.map((message, index) => <div key={index} className={`chat-message ${message.sender}`}>{message.question && <strong className="ld-question-label">{text.followup}</strong>}{message.text}</div>)}
+          {!typing && options.length > 0 && <div className="ld-chat-answers"><p>{text.prompt}</p>{options.map((option, index) => <button key={option} className="chat-option-btn" onClick={() => send(option)}><span>{index + 1}</span>{option}</button>)}</div>}
+          {!typing && stage === 3 && <button className="ld-text-button" onClick={() => reset()}>{text.restart} <RotateCcw size={16} /></button>}
+          {typing && <div className="chat-typing" role="status" aria-label="Preparing sample reply"><span /><span /><span /></div>}
         </div>
-        <div>
-          <div className="chat-header-title">AgriBot Assistant</div>
-          <div className="chat-header-subtitle">
-            <span></span> BERT Diagnostic Engine Online
-          </div>
-        </div>
+        <form className="chat-footer" onSubmit={event => { event.preventDefault(); send(input); }}>
+          <input className="chat-input" aria-label={text.placeholder} placeholder={text.placeholder} value={input} onChange={event => setInput(event.target.value)} disabled={typing || stage === 3} maxLength={500} />
+          <button className="chat-send-btn flex-center" type="submit" aria-label="Send message" disabled={typing || stage === 3 || !input.trim()}><Send size={18} /></button>
+        </form>
       </div>
-
-      {/* Chat Messages Body */}
-      <div className="chat-body">
-        {messages.map((msg) => (
-          <React.Fragment key={msg.id}>
-            <div className={`chat-message ${msg.sender}`}>
-              {msg.text}
-            </div>
-
-            {/* Render interactive suggestions if available on the latest bot message */}
-            {msg.sender === 'bot' && msg.options && msg.id === messages[messages.length - 1].id && !isTyping && (
-              <div className="chat-interactive-options" style={{ alignSelf: 'flex-start', maxWidth: '90%' }}>
-                {msg.options.map((opt, i) => (
-                  <button
-                    key={i}
-                    onClick={() => handleSendMessage(opt)}
-                    className="chat-option-btn"
-                  >
-                    {opt}
-                  </button>
-                ))}
-              </div>
-            )}
-          </React.Fragment>
-        ))}
-
-        {/* Typing bubble */}
-        {isTyping && (
-          <div className="chat-typing">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-        )}
-        <div ref={chatEndRef} />
-      </div>
-
-      {/* Chat Form Footer */}
-      <form
-        className="chat-footer"
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSendMessage(inputText);
-        }}
-      >
-        <input
-          type="text"
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          placeholder="Ask AgriBot about crop issues..."
-          className="chat-input"
-          disabled={isTyping}
-        />
-        <button type="submit" className="chat-send-btn flex-center" disabled={isTyping || !inputText.trim()}>
-          <Send className="w-4 h-4" />
-        </button>
-      </form>
+      <DemoScreenReference screen="chat" />
     </div>
   );
 }

@@ -15,7 +15,6 @@ import {
   Menu, 
   X, 
   Send,
-  Zap,
   Globe,
   Download,
   ArrowRight,
@@ -24,9 +23,7 @@ import {
 } from 'lucide-react';
 
 // Import custom components
-import ScannerDemo from './components/ScannerDemo';
-import PestDetectorDemo from './components/PestDetectorDemo';
-import AgriBotDemo from './components/AgriBotDemo';
+const LiveDemoPage = lazy(() => import('./components/LiveDemoPage'));
 import DownloadSection from './components/DownloadSection';
 import ResearchGallery from './components/ResearchGallery';
 import TeamSection from './components/TeamSection';
@@ -383,60 +380,6 @@ export default function App() {
             .from('.hero-mini-badges', { opacity: 0, y: 20, duration: 0.6, ease: 'power2.out' }, '-=0.4')
             .from('.hero-center', { opacity: 0, scale: 0.95, duration: 1, ease: 'power3.out' }, '-=0.8')
             .from('.product-carousel', { opacity: 0, x: 20, duration: 0.6, ease: 'power2.out' }, '-=0.6');
-    } else if (currentPage === 'simulators') {
-      // Animate simulator page entrance
-      gsap.fromTo('.section-header', 
-        { opacity: 0, y: -20 },
-        { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }
-      );
-      
-      if (document.querySelector('.showcase-row-1')) {
-        gsap.fromTo('.showcase-row-1', 
-          { opacity: 0, y: 45 },
-          {
-            scrollTrigger: {
-              trigger: '.showcase-row-1',
-              start: 'top 85%',
-            },
-            opacity: 1,
-            y: 0,
-            duration: 0.9,
-            ease: 'power2.out'
-          }
-        );
-      }
-
-      if (document.querySelector('.showcase-row-2')) {
-        gsap.fromTo('.showcase-row-2', 
-          { opacity: 0, y: 45 },
-          {
-            scrollTrigger: {
-              trigger: '.showcase-row-2',
-              start: 'top 85%',
-            },
-            opacity: 1,
-            y: 0,
-            duration: 0.9,
-            ease: 'power2.out'
-          }
-        );
-      }
-
-      if (document.querySelector('.showcase-row-3')) {
-        gsap.fromTo('.showcase-row-3', 
-          { opacity: 0, y: 45 },
-          {
-            scrollTrigger: {
-              trigger: '.showcase-row-3',
-              start: 'top 85%',
-            },
-            opacity: 1,
-            y: 0,
-            duration: 0.9,
-            ease: 'power2.out'
-          }
-        );
-      }
     } else if (currentPage === 'gallery') {
       gsap.fromTo('.section-header', 
         { opacity: 0, y: -20 },
@@ -722,7 +665,6 @@ export default function App() {
               {/* 3d. Center product (the 3D onion + circular backdrop + cursive callout script + floating leaves) */}
               <div className="hero-center">
                 {/* Soft circular backdrop matching screenshot */}
-                <div className="hero-onion-backdrop-circle" aria-hidden="true" />
 
                 {/* Floating green leaves */}
                 <div className="floating-leaf floating-leaf-left" aria-hidden="true">
@@ -888,88 +830,9 @@ export default function App() {
 
       {/* Interactive Showcase Demos Section */}
       {currentPage === 'simulators' && (
-        <section id="demo" className="section" style={{ paddingTop: '8rem' }}>
-          <div className="container">
-            <div className="section-header">
-              <h2 className="gradient-text">Interactive Live Simulators</h2>
-              <p>Experience how our deep learning models run diagnostic analysis directly inside the mobile app ecosystem.</p>
-            </div>
-
-            <div className="showcase-wrapper">
-              {/* Demo 1 */}
-              <div className="showcase-row showcase-row-1">
-                <div className="showcase-content">
-                  <div className="showcase-step-num">Step 1</div>
-                  <h2>Leaf disease & Nutrient scan</h2>
-                  <p>
-                    Experience the localized TFLite classifier and Grad-CAM analyzer. Tap the button on the leaf visual to scan.
-                  </p>
-                  <ul className="showcase-bullets">
-                    <li style={{ display: 'flex', gap: '0.5rem' }}>
-                      <Zap className="w-4 h-4 text-emerald-400" />
-                      <span><strong>TFLite Integration:</strong> Runs on-device with sub-100ms inference times.</span>
-                    </li>
-                    <li style={{ display: 'flex', gap: '0.5rem' }}>
-                      <Zap className="w-4 h-4 text-emerald-400" />
-                      <span><strong>Grad-CAM:</strong> Highlights nutrient deficient regions using red-to-yellow thermal maps.</span>
-                    </li>
-                  </ul>
-                </div>
-                <div className="flex-center">
-                  <ScannerDemo />
-                </div>
-              </div>
-
-              {/* Demo 2 */}
-              <div className="showcase-row reverse showcase-row-2">
-                <div className="flex-center">
-                  <PestDetectorDemo />
-                </div>
-                <div className="showcase-content">
-                  <div className="showcase-step-num">Step 2</div>
-                  <h2>PyTorch Pest Target Bounding Box</h2>
-                  <p>
-                    Our object detection model runs Faster R-CNN to localize tiny thrips. Hover or tap the onion plant vector to activate target boxes.
-                  </p>
-                  <ul className="showcase-bullets">
-                    <li style={{ display: 'flex', gap: '0.5rem' }}>
-                      <Zap className="w-4 h-4 text-emerald-400" />
-                      <span><strong>Precise Localization:</strong> Draws bounding coordinates indicating thrips clusters.</span>
-                    </li>
-                    <li style={{ display: 'flex', gap: '0.5rem' }}>
-                      <Zap className="w-4 h-4 text-emerald-400" />
-                      <span><strong>Density Mapping:</strong> Computes pest counts per leaf area to guide smart spray applications.</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* Demo 3 */}
-              <div className="showcase-row showcase-row-3">
-                <div className="showcase-content">
-                  <div className="showcase-step-num">Step 3</div>
-                  <h2>BERT AgriBot Chatbot Dialog</h2>
-                  <p>
-                    Consult our chatbot for crop diagnosis and management advisory. Select options or type messages inside the simulator.
-                  </p>
-                  <ul className="showcase-bullets">
-                    <li style={{ display: 'flex', gap: '0.5rem' }}>
-                      <Zap className="w-4 h-4 text-emerald-400" />
-                      <span><strong>Natural Language:</strong> BERT classifier routes questions to relevant agronomic domains.</span>
-                    </li>
-                    <li style={{ display: 'flex', gap: '0.5rem' }}>
-                      <Zap className="w-4 h-4 text-emerald-400" />
-                      <span><strong>Bayesian Logic:</strong> Guides you through symptom checking logic to identify root causes.</span>
-                    </li>
-                  </ul>
-                </div>
-                <div className="flex-center">
-                  <AgriBotDemo />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <Suspense fallback={<div role="status" style={{ minHeight: '70vh', padding: '10rem 2rem', textAlign: 'center' }}>Loading the interactive demo...</div>}>
+          <LiveDemoPage />
+        </Suspense>
       )}
 
       {/* Project Overview Section */}
