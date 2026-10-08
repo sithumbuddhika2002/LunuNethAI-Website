@@ -2,8 +2,52 @@ import { useState, type MouseEvent } from 'react';
 import { ArrowDown, ArrowRight, BookOpen, CheckCircle2, Clock3, Download, FileText, Layers, Network, Search, Target } from 'lucide-react';
 import './ProjectOverview.css';
 import ResearchChapterContent from './ResearchChapterContent';
-import pdfDocuments from 'virtual:research-pdfs';
 import { documentCategories, documentCategoryLabel } from '../documentCategories';
+
+// Shared Drive files: add new file IDs here when the library grows.
+const pdfDocuments = [
+  {
+    "filename": "Proposal_Report_Chatbot.pdf",
+    "category": "Proposal_Report",
+    "id": "1tyc0kAX2G4yXZh67ypgDqJy-gSJ9uWIo"
+  },
+  {
+    "filename": "Proposal_Report_NutrientDeficiency.pdf",
+    "category": "Proposal_Report",
+    "id": "1x7cRCzKOT-WVzMtEnuL102adVuDy0_lQ"
+  },
+  {
+    "filename": "Proposal_Report_PestDetection.pdf",
+    "category": "Proposal_Report",
+    "id": "1ULuUPPtT-x6RK7g3YCa4tXqmuVitdMYv"
+  },
+  {
+    "filename": "Proposal_Report_PurpleBlotch.pdf",
+    "category": "Proposal_Report",
+    "id": "1m54nfIYee1cOdRqLmxeE5hPPnMwlDciu"
+  },
+  {
+    "filename": "Progress Presentation 1.pptx",
+    "category": "Presentations",
+    "id": "1jSXjZCnUwlP-0nh9qNgy5Jd-1jzfBZjq"
+  },
+  {
+    "filename": "Progress Presentation 2.pptx",
+    "category": "Presentations",
+    "id": "16YrKbcL6E5imNAnoITRy-DljIuulK9ca"
+  },
+  {
+    "filename": "Research Article.pdf",
+    "category": "Research_paper",
+    "id": "1EJp3N10PP9yu7wIdOto7_a8n3tU7ARRX"
+  }
+].map(item => ({
+  ...item,
+  title: item.filename.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' '),
+  format: item.filename.split('.').pop()?.toUpperCase(),
+  url: `https://drive.google.com/file/d/${item.id}/view`,
+  downloadUrl: `https://drive.google.com/uc?export=download&id=${item.id}`,
+}));
 
 const chapters = [
   { title: 'Literature Review', icon: BookOpen, label: 'The foundation' },
@@ -81,7 +125,7 @@ export default function ProjectOverview() {
         </article>
       </section>
       <section id="research-documents" tabIndex={-1} className="research-documents" aria-labelledby="documents-title">
-        <div className="research-documents-header"><div><p className="research-eyebrow">The project library</p><h2 id="documents-title">Research documents</h2><p>Browse research PDFs by category. Open a document or save a copy.</p></div><label className="research-search"><Search size={18} /><input aria-label="Search research documents" value={query} onChange={event => setQuery(event.target.value)} placeholder="Find a document or category…" type="search" /></label></div>
+        <div className="research-documents-header"><div><p className="research-eyebrow">The project library</p><h2 id="documents-title">Research documents</h2><p>Browse research documents by category. View or download individual files from Google Drive.</p></div><label className="research-search"><Search size={18} /><input aria-label="Search research documents" value={query} onChange={event => setQuery(event.target.value)} placeholder="Find a document or category…" type="search" /></label></div>
         <p className="research-result-count" role="status">{visiblePdfs.length} of {pdfDocuments.length} documents</p>
         <div className="research-category-sections">
           {categories.map(category => {
@@ -96,10 +140,10 @@ export default function ProjectOverview() {
                 {documents.length > 0 ? <div className="research-pdf-list">
                   {documents.map(item => <article className="research-pdf-row" key={item.url}>
                     <span className="research-document-icon"><FileText size={23} /></span>
-                    <div className="research-pdf-title"><h4>{item.title}</h4><p>PDF · {item.filename}</p></div>
+                    <div className="research-pdf-title"><h4>{item.title}</h4><p>{item.format} · {item.filename}</p></div>
                     <div className="research-pdf-actions">
-                      <a href={item.url} target="_blank" rel="noopener noreferrer" aria-label={`Open ${item.title} PDF in a new tab`}>Open PDF <ArrowRight size={16} /></a>
-                      <a href={item.url} download={item.filename} aria-label={`Download ${item.title} PDF`}><Download size={16} /> Download</a>
+                      <a href={item.url} target="_blank" rel="noopener noreferrer" aria-label={`View ${item.title} on Google Drive in a new tab`}>View <ArrowRight size={16} /></a>
+                      <a href={item.downloadUrl} target="_blank" rel="noopener noreferrer" aria-label={`Download ${item.title}`}><Download size={16} /> Download</a>
                     </div>
                   </article>)}
                 </div> : <p className="research-category-empty">{total > 0 ? 'No documents match your search in this category.' : 'No documents available yet.'}</p>}
