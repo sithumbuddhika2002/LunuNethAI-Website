@@ -41,6 +41,7 @@ import WindowsInstallPopup from './components/WindowsInstallPopup';
 import FloatingOnionsScene from './components/FloatingOnionsScene';
 import SiteFooter from './components/SiteFooter';
 import { useScrollAnimations } from './hooks/useScrollAnimations';
+import { updatePageSeo } from './utils/pageSeo';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -70,6 +71,7 @@ declare module 'react' {
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<'home' | 'overview' | 'simulators' | 'gallery' | 'beta' | 'admin'>('home');
+  useEffect(() => { updatePageSeo(currentPage); }, [currentPage]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [navigationFeedback, setNavigationFeedback] = useState(0);
   const navigationSequence = useRef(0);
@@ -473,7 +475,7 @@ export default function App() {
       {/* Navigation Bar */}
       <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="container nav-container">
-          <a href="#" className="logo" onClick={(e) => { e.preventDefault(); navigateTo('home'); }} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', whiteSpace: 'nowrap' }}>
+          <a href="/" className="logo" onClick={(e) => { e.preventDefault(); navigateTo('home'); }} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', whiteSpace: 'nowrap' }}>
             <img src="/logo.jpeg" alt="LunuNeth AI Logo" style={{ width: '2.5rem', height: '2.5rem', borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--accent-primary)' }} />
             <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1, whiteSpace: 'nowrap' }}>
               <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--accent-primary)', whiteSpace: 'nowrap' }}>LunuNeth AI</span>
@@ -484,7 +486,7 @@ export default function App() {
           <ul className="nav-links">
             <li>
               <a 
-                href="#" 
+                href="/"
                 className={currentPage === 'home' && activeSection === '' ? 'active' : ''} 
                 onClick={(e) => { e.preventDefault(); navigateTo('home'); }}
               >
@@ -493,7 +495,7 @@ export default function App() {
             </li>
             <li>
               <a 
-                href="#" 
+                href="/overview"
                 className={currentPage === 'overview' ? 'active' : ''} 
                 onClick={(e) => { e.preventDefault(); navigateTo('overview'); }}
               >
@@ -502,7 +504,7 @@ export default function App() {
             </li>
             <li>
               <a 
-                href="#" 
+                href="/simulators"
                 className={currentPage === 'simulators' ? 'active' : ''} 
                 onClick={(e) => { e.preventDefault(); navigateTo('simulators'); }}
               >
@@ -511,7 +513,7 @@ export default function App() {
             </li>
             <li>
               <a 
-                href="#" 
+                href="/gallery"
                 className={currentPage === 'gallery' ? 'active' : ''} 
                 onClick={(e) => { e.preventDefault(); navigateTo('gallery'); }}
               >
@@ -532,7 +534,7 @@ export default function App() {
           <div className="nav-actions">
             <ThemeToggle />
             <a 
-              href="#" 
+              href="/beta"
               onClick={(e) => { e.preventDefault(); navigateTo('beta'); }} 
               className="solid-btn" 
               style={{ padding: '0.5rem 1.25rem', fontSize: '0.85rem' }}
@@ -549,28 +551,28 @@ export default function App() {
         {mobileMenuOpen && (
           <div className="mobile-dropdown">
             <a 
-              href="#" 
+              href="/"
               className={currentPage === 'home' && activeSection === '' ? 'active' : ''} 
               onClick={(e) => { e.preventDefault(); navigateTo('home'); }}
             >
               Home
             </a>
             <a 
-              href="#" 
+              href="/overview"
               className={currentPage === 'overview' ? 'active' : ''} 
               onClick={(e) => { e.preventDefault(); navigateTo('overview'); }}
             >
               Overview
             </a>
             <a 
-              href="#" 
+              href="/simulators"
               className={currentPage === 'simulators' ? 'active' : ''} 
               onClick={(e) => { e.preventDefault(); navigateTo('simulators'); }}
             >
               Live Demo
             </a>
             <a 
-              href="#" 
+              href="/gallery"
               className={currentPage === 'gallery' ? 'active' : ''} 
               onClick={(e) => { e.preventDefault(); navigateTo('gallery'); }}
             >
@@ -614,12 +616,12 @@ export default function App() {
                 </h1>
                 <div className="hero-subheading">Crop Intelligence</div>
                 <p className="description">
-                  Empowering onion farmers and researchers with deep learning. 
+                  LunuNeth AI empowers Sri Lankan onion farmers and researchers with deep learning.
                   Diagnose diseases, track thrips pests, identify nutrient deficiencies, and predict regional outbreaks.
                 </p>
                 <div className="cta-group">
                   <a 
-                    href="#" 
+                    href="/beta"
                     onClick={(e) => { e.preventDefault(); navigateTo('beta'); }} 
                     className="primary-btn download-cta-btn"
                   >
@@ -627,7 +629,7 @@ export default function App() {
                     <span className="plus-icon"><Download className="w-4 h-4" /></span>
                   </a>
                   <a 
-                    href="#" 
+                    href="/simulators"
                     onClick={(e) => { e.preventDefault(); navigateTo('simulators'); }} 
                     className="primary-btn demo-cta-btn"
                   >
