@@ -50,7 +50,7 @@ const pdfDocuments = [
 }));
 
 const chapters = [
-  { title: 'Literature Review', icon: BookOpen, label: 'The foundation' },
+  { title: 'Literature Survey', icon: BookOpen, label: 'The foundation' },
   { title: 'Research Gap', icon: Search, label: 'The opportunity' },
   { title: 'Research Objectives', icon: Target, label: 'Our direction' },
   { title: 'Methodology & Technologies', icon: Network, label: 'The approach & tools' },
@@ -121,7 +121,7 @@ export default function ProjectOverview() {
             <h2>{chapters[chapter].title}</h2>
             <ResearchChapterContent chapter={chapter} />
           </div>
-          <footer className="research-panel-footer"><span>0{chapter + 1} <span>/ 04 chapters</span></span><button onClick={() => setChapter((chapter + 1) % chapters.length)}>{chapter === chapters.length - 1 ? 'Back to literature' : `Next: ${chapters[chapter + 1].title}`}<ArrowRight size={16} /></button></footer>
+          <footer className="research-panel-footer"><span>0{chapter + 1} <span>/ 04 chapters</span></span><button onClick={() => setChapter((chapter + 1) % chapters.length)}>{chapter === chapters.length - 1 ? 'Back to Literature Survey' : `Next: ${chapters[chapter + 1].title}`}<ArrowRight size={16} /></button></footer>
         </article>
       </section>
       <section id="research-documents" tabIndex={-1} className="research-documents" aria-labelledby="documents-title">
